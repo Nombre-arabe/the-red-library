@@ -26,7 +26,7 @@ body{
   color:var(--lightgray);
   font-family:'Courier Prime',monospace;
   overflow-x:hidden;
-  cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Ccircle cx='10' cy='10' r='4' fill='%238B4513'/%3E%3Ccircle cx='10' cy='10' r='8' fill='none' stroke='%23A0522D' stroke-width='1'/%3E%3C/svg%3E") 10 10, crosshair;
+  cursor:crosshair;
 }
 
 body.playing-game {
@@ -156,7 +156,7 @@ section{position:relative;z-index:2;min-height:100vh;overflow:hidden;}
   image-rendering: pixelated; image-rendering: crisp-edges;
 }
 
-/* INTERFAZ HUD TÁCTIL/PRO */
+/* INTERFAZ HUD */
 .game-hud-overlay {
   position: absolute; top: 20px; left: 90px; right: 20px;
   display: flex; justify-content: space-between; align-items: center;
@@ -169,7 +169,7 @@ section{position:relative;z-index:2;min-height:100vh;overflow:hidden;}
 }
 .hud-hp-fill { width: 100%; height: 100%; background: #990000; transition: width 0.2s; }
 
-/* ZONAS TÁCTILES TRANSPARENTES (REQUISITO RE-IMAGINADO) */
+/* ZONAS TÁCTILES */
 .touch-zone-left {
   position: absolute; left: 0; top: 0; bottom: 0; width: 45vw;
   z-index: 10001; cursor: pointer;
@@ -194,7 +194,7 @@ section{position:relative;z-index:2;min-height:100vh;overflow:hidden;}
 
 .pc-hint { margin-top: 1rem; font-size: 0.75rem; color: var(--burnt); letter-spacing: 0.1em; }
 
-/* ── ORIGINAL CONTENT STYLES (PRESERVADOS) ── */
+/* ── ORIGINAL CONTENT STYLES ── */
 #main{ background:radial-gradient(ellipse at center, #1a0f0a 0%, var(--darkbg) 70%); display:grid; grid-template-rows:auto 1fr; padding-top:80px; }
 .hero-title-block{ text-align:center; padding:3rem 2rem 1rem; position:relative; }
 .hero-eyebrow{
@@ -260,11 +260,6 @@ section{position:relative;z-index:2;min-height:100vh;overflow:hidden;}
 .coming-soon-title{ font-family:'Special Elite',cursive; font-size:clamp(2.5rem,6vw,6rem); color:var(--macadamia); text-shadow:0 0 40px rgba(139,69,19,0.5); margin-bottom:0.5rem; line-height:1; }
 .coming-soon-sub{ font-family:'Special Elite',cursive; font-size:clamp(1.5rem,3vw,2.5rem); color:var(--burnt); letter-spacing:0.1em; margin-bottom:2rem; }
 .coming-soon-desc{ font-size:0.8rem; color:var(--lightgray); line-height:1.9; max-width:420px; margin:0 auto 3rem; opacity:0.6; }
-.redacted-line{ display:block; background:var(--burnt); color:transparent; user-select:none; margin:0.3rem auto; height:1.2em; }
-.redacted-line:nth-child(1){width:80%;} .redacted-line:nth-child(2){width:65%;} .redacted-line:nth-child(3){width:75%;}
-.notify-box{ display:inline-flex; align-items:center; gap:1rem; border:1px solid rgba(139,69,19,0.3); padding:0.8rem 2rem; font-family:'Oswald',sans-serif; font-size:0.7rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--lightgray); background:rgba(139,69,19,0.05); transition:background 0.3s,border-color 0.3s; cursor:pointer; }
-.notify-box:hover{background:rgba(139,69,19,0.12);border-color:var(--burnt);}
-.notify-dot{width:6px;height:6px;border-radius:50%;background:var(--blood);animation:pulse 1.5s infinite;}
 
 .reveal{opacity:0;transform:translateY(40px);transition:opacity 0.8s ease,transform 0.8s ease;}
 .reveal.visible{opacity:1;transform:translateY(0);}
@@ -288,10 +283,6 @@ footer p{font-family:'Courier Prime',monospace; font-size:0.65rem; color:var(--b
   .nav-links{gap:1.2rem;}
   .hero-canvas-wrap{padding:0 1.5rem 3rem;}
 }
-@media(max-width:600px){
-  .nav-links a:not(:last-child){display:none;}
-  .historia-inner{padding:0 1.5rem;}
-}
 </style>
 </head>
 <body>
@@ -300,7 +291,6 @@ footer p{font-family:'Courier Prime',monospace; font-size:0.65rem; color:var(--b
 <div id="fullscreen-game-wrapper">
   <button class="mobile-r-btn" id="r-exit-btn">R</button>
   
-  <!-- HUD PRINCIPAL -->
   <div class="game-hud-overlay">
     <div>
       <div>LEON S. KENNEDY</div>
@@ -308,11 +298,10 @@ footer p{font-family:'Courier Prime',monospace; font-size:0.65rem; color:var(--b
     </div>
     <div style="text-align: right;">
       <div style="font-size: 0.75rem; color: var(--coolblue);">ZONA 1 - PISO 1</div>
-      <div style="font-size: 1.4rem;" id="hud-ammo">REQUYEM: 15/∞</div>
+      <div style="font-size: 1.4rem;" id="hud-ammo">ELIMINADOS: <span id="kill-count">0</span> / 30</div>
     </div>
   </div>
 
-  <!-- Zonas táctiles invisibles para el control móvil -->
   <div class="touch-zone-left" id="touchMoveZone">
     <div class="touch-hint-box">Mover: Desliza / Presiona aquí (WASD)</div>
   </div>
@@ -320,16 +309,13 @@ footer p{font-family:'Courier Prime',monospace; font-size:0.65rem; color:var(--b
     <div class="touch-hint-box">Disparar (4 Direcciones): Presiona aquí (Flechas)</div>
   </div>
 
-  <!-- LIENZO PIXEL ART NATIVO -->
   <div id="game-canvas-container">
     <canvas id="gameCanvas"></canvas>
   </div>
 </div>
 
-<!-- BLOOD DRIPS -->
 <div class="blood-drip" id="blood-drip"></div>
 
-<!-- NAVIGATION -->
 <nav>
   <div class="nav-logo">THE RED GALLERY</div>
   <div class="nav-links">
@@ -338,68 +324,44 @@ footer p{font-family:'Courier Prime',monospace; font-size:0.65rem; color:var(--b
     <a href="#historia">Historia</a>
     <a href="#libro">El Libro</a>
   </div>
-  <div class="nav-emblem">
-    <svg viewBox="0 0 40 40" fill="none">
-      <circle cx="20" cy="20" r="18" stroke="#8B4513" stroke-width="1.5"/>
-      <circle cx="20" cy="20" r="10" stroke="#6B0000" stroke-width="1"/>
-      <line x1="20" y1="2" x2="20" y2="38" stroke="#8B4513" stroke-width="1"/>
-      <line x1="2" y1="20" x2="38" y2="20" stroke="#8B4513" stroke-width="1"/>
-      <circle cx="20" cy="20" r="3" fill="#6B0000"/>
-    </svg>
-  </div>
 </nav>
 
-<!-- SECCIÓN DEL JUEGO -->
 <section id="juego-principal">
   <div class="section-frame"></div>
   <div class="game-hero-container reveal">
     <div class="game-tag">// OPERACIÓN: CRISTAL CARMESÍ</div>
     <h2 class="main-title" style="font-size: clamp(2rem, 5vw, 4.5rem);">LEON: THE PORTAL SURVIVAL</h2>
     <p class="title-sub" style="color: var(--lightgray); max-width: 650px; margin: 1rem auto; font-size: 0.85rem; line-height: 1.6;">
-      Controla a Leon S. Kennedy. Enfréntate a las hordas de Umbrella y demonios del portal con disparo en 4 direcciones. Estilo pixel art texturizado integrado en tiempo real.
+      Enfréntate a las hordas de Umbrella con disparo en 4 direcciones. Estilo pixel art texturizado integrado en tiempo real.
     </p>
     <button class="game-main-btn" id="start-game-trigger">INICIAR SIMULACIÓN</button>
     <div class="pc-hint">Teclado: WASD para moverte | Flechas para disparar</div>
   </div>
 </section>
 
-<!-- SECCIONES ORIGINALES -->
+<!-- SECCIONES DE CONTENIDO ORIGINAL -->
 <section id="main">
   <div class="section-frame"></div>
   <div class="hero-title-block reveal">
     <div class="hero-eyebrow">Bienvenido al Umbral</div>
     <h1 class="main-title">THE RED<br>GALLERY</h1>
     <div class="title-sub">Una colección oscura</div>
-    <div class="title-divider">
-      <span></span>
-      <svg viewBox="0 0 20 20"><path d="M10 0l2 7h7l-6 4 2 7-5-4-5 4 2-7-6-4h7z"/></svg>
-      <span></span>
-    </div>
   </div>
   <div class="hero-canvas-wrap">
     <div class="hero-side-text reveal" style="text-align:right;align-items:flex-end;">
-      <div class="hero-stat" style="border-left:none;border-right:2px solid var(--blood);padding-left:0;padding-right:1rem;">
+      <div class="hero-stat" style="border-right:2px solid var(--blood);padding-right:1rem;">
         <div class="hero-stat-label">Estado</div>
-        <div class="hero-stat-val">ACTIVO<small>Sistema en línea</small></div>
-      </div>
-      <div class="hero-stat" style="border-left:none;border-right:2px solid var(--blood);padding-left:0;padding-right:1rem;">
-        <div class="hero-stat-label">Protocolo</div>
-        <div class="hero-stat-val">ROJO<small>Nivel máximo</small></div>
+        <div class="hero-stat-val">ACTIVO</div>
       </div>
     </div>
     <canvas id="hero-canvas"></canvas>
     <div class="hero-side-text reveal">
       <div class="hero-stat">
-        <div class="hero-stat-label">Contenido</div>
-        <div class="hero-stat-val">3 Salas<small>Explorar galería</small></div>
-      </div>
-      <div class="hero-stat">
         <div class="hero-stat-label">Amenaza</div>
-        <div class="hero-stat-val">CRÍTICA<small>No entrar solo</small></div>
+        <div class="hero-stat-val">CRÍTICA</div>
       </div>
     </div>
   </div>
-  <div class="scroll-prompt">↓ Desplaza para explorar ↓</div>
 </section>
 
 <section id="historia">
@@ -408,37 +370,20 @@ footer p{font-family:'Courier Prime',monospace; font-size:0.65rem; color:var(--b
     <div class="historia-header reveal">
       <div class="historia-num">02</div>
       <div class="historia-title-group">
-        <div class="historia-chapter">// Capítulo — La Historia</div>
-        <h2 class="historia-h2">El origen<br>de las sombras</h2>
-      </div>
-    </div>
-    <div class="timeline">
-      <div class="timeline-item">
-        <div class="timeline-dot"></div>
-        <div class="timeline-year">// Capítulo I</div>
-        <div class="timeline-title">El Primer Umbral</div>
-        <div class="timeline-body">Las primeras páginas de esta historia se escriben bajo la luz roja de la galería.</div>
+        <h2 class="historia-h2">El origen de las sombras</h2>
       </div>
     </div>
     <div class="historia-split">
       <div class="historia-canvas-wrap reveal"><canvas id="historia-canvas"></canvas></div>
-      <div class="lore-cards reveal">
-        <div class="lore-card">
-          <div class="lore-card-title"><span></span>El Laboratorio Subterráneo</div>
-          <div class="lore-card-text">Un complejo de investigación construido bajo tierra, invisible para el mundo exterior.</div>
-        </div>
-      </div>
     </div>
   </div>
 </section>
 
 <section id="libro">
   <div class="section-frame"></div>
-  <div class="libro-bg-glow"></div>
   <div class="libro-inner">
     <canvas id="libro-canvas"></canvas>
     <div class="coming-soon-title">EL LIBRO</div>
-    <div class="coming-soon-sub">Próximamente</div>
   </div>
 </section>
 
@@ -450,309 +395,163 @@ footer p{font-family:'Courier Prime',monospace; font-size:0.65rem; color:var(--b
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 // ══════════════════════════════════════════
-// MOTOR DEL JUEGO INTERACTIVO (PIXEL ART)
+// MOTOR DEL JUEGO CORREGIDO CON ENEMIGOS
 // ══════════════════════════════════════════
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 const gameWrapper = document.getElementById('fullscreen-game-wrapper');
 
-// Ajuste pixel-art nítido
 ctx.imageSmoothingEnabled = false;
-ctx.mozImageSmoothingEnabled = false;
-ctx.webkitImageSmoothingEnabled = false;
 
-// Estado Global del Juego
 let gameRunning = false;
+let kills = 0;
 let player = {
-  x: 200, y: 200, size: 24, speed: 3.5, hp: 100, maxHp: 100,
-  dirX: 0, dirY: 1, lastShot: 0, shotCooldown: 250
+  x: 400, y: 250, size: 24, speed: 4, hp: 100, maxHp: 100,
+  lastShot: 0, shotCooldown: 220
 };
 let bullets = [];
+let enemies = [];
 let keys = {};
 
-// Ajustar dimensiones fijas internas virtuales para mantener aspecto retro texturizado
 const V_WIDTH = 800;
 const V_HEIGHT = 500;
 
-function resizeGame() {
-  canvas.width = V_WIDTH;
-  canvas.height = V_HEIGHT;
-}
+function resizeGame() { canvas.width = V_WIDTH; canvas.height = V_HEIGHT; }
 window.addEventListener('resize', resizeGame);
 resizeGame();
 
-// Captura de controles de Teclado PC
 window.addEventListener('keydown', e => { keys[e.key.toLowerCase()] = true; });
 window.addEventListener('keyup', e => { keys[e.key.toLowerCase()] = false; });
 
-// Soporte Táctil Re-imaginado (Híbrido)
-const touchMoveZone = document.getElementById('touchMoveZone');
-const touchShootZone = document.getElementById('touchShootZone');
-
-touchMoveZone.addEventListener('touchstart', handleTouchMove, {passive: false});
-touchMoveZone.addEventListener('touchmove', handleTouchMove, {passive: false});
-touchMoveZone.addEventListener('touchend', () => { keys['w']=keys['a']=keys['s']=keys['d']=false; });
-
-touchShootZone.addEventListener('touchstart', handleTouchShoot, {passive: false});
-touchShootZone.addEventListener('touchmove', handleTouchShoot, {passive: false});
-
-function handleTouchMove(e) {
-  e.preventDefault();
-  const rect = touchMoveZone.getBoundingClientRect();
-  const touch = e.touches[0];
-  const relX = touch.clientX - (rect.left + rect.width/2);
-  const relY = touch.clientY - (rect.top + rect.height/2);
-  
-  keys['a'] = relX < -20;
-  keys['d'] = relX > 20;
-  keys['w'] = relY < -20;
-  keys['s'] = relY > 20;
-}
-
-function handleTouchShoot(e) {
-  e.preventDefault();
-  const rect = touchShootZone.getBoundingClientRect();
-  const touch = e.touches[0];
-  const relX = touch.clientX - (rect.left + rect.width/2);
-  const relY = touch.clientY - (rect.top + rect.height/2);
-  
-  if (Math.abs(relX) > Math.abs(relY)) {
-    fireBullet(relX > 0 ? 'arrowright' : 'arrowleft');
-  } else {
-    fireBullet(relY > 0 ? 'arrowdown' : 'arrowup');
-  }
-}
-
-function fireBullet(dirKey) {
+function fireBullet(dir) {
   const now = Date.now();
   if (now - player.lastShot < player.shotCooldown) return;
-  
   let vx = 0, vy = 0;
-  if (dirKey === 'arrowup') vy = -7;
-  if (dirKey === 'arrowdown') vy = 7;
-  if (dirKey === 'arrowleft') vx = -7;
-  if (dirKey === 'arrowright') vx = 7;
+  if (dir === 'up') vy = -7;
+  if (dir === 'down') vy = 7;
+  if (dir === 'left') vx = -7;
+  if (dir === 'right') vx = 7;
 
-  if (vx !== 0 || vy !== 0) {
-    bullets.push({ x: player.x, y: player.y - 4, vx, vy, size: 5 });
-    player.lastShot = now;
-  }
+  bullets.push({ x: player.x, y: player.y - 6, vx, vy, size: 5 });
+  player.lastShot = now;
 }
 
-// TEXTURAS GENERADAS POR CÓDIGO (ESTILO TERRARIA)
-function drawMetalFloorTextured() {
-  const tileSize = 40;
-  for (let x = 0; x < V_WIDTH; x += tileSize) {
-    for (let y = 0; y < V_HEIGHT; y += tileSize) {
-      // Fondo base de metal oscuro
-      ctx.fillStyle = '#181c1f';
-      ctx.fillRect(x, y, tileSize, tileSize);
-      // Bordes de planchas oxidadas (Líneas pixel-art)
-      ctx.fillStyle = '#0f1112';
-      ctx.fillRect(x, y, tileSize, 2);
-      ctx.fillRect(x, y, 2, tileSize);
-      // Puntos/Remaches texturizados
-      ctx.fillStyle = '#2c353a';
-      ctx.fillRect(x + 6, y + 6, 3, 3);
-      ctx.fillRect(x + tileSize - 8, y + 6, 3, 3);
-      ctx.fillRect(x + 6, y + tileSize - 8, 3, 3);
-      ctx.fillRect(x + tileSize - 8, y + tileSize - 8, 3, 3);
-      
-      // Óxido Carmesí en las juntas
-      if ((x + y) % 3 === 0) {
-        ctx.fillStyle = '#3a0c0c';
-        ctx.fillRect(x + 10, y + tileSize - 4, 8, 2);
-      }
+function spawnZombie() {
+  if (enemies.length >= 8) return; 
+  let edge = Math.floor(Math.random() * 4);
+  let x, y;
+  if (edge === 0) { x = Math.random() * V_WIDTH; y = 40; }
+  if (edge === 1) { x = Math.random() * V_WIDTH; y = V_HEIGHT - 30; }
+  if (edge === 2) { x = 30; y = Math.random() * V_HEIGHT; }
+  if (edge === 3) { x = V_WIDTH - 30; y = Math.random() * V_HEIGHT; }
+  enemies.push({ x, y, speed: 1.2, hp: 3, size: 22 });
+}
+
+// TEXTURAS PIXEL ART
+function drawMetalFloor() {
+  const t = 40;
+  for (let x = 0; x < V_WIDTH; x += t) {
+    for (let y = 0; y < V_HEIGHT; y += t) {
+      ctx.fillStyle = '#191d21'; ctx.fillRect(x, y, t, t);
+      ctx.fillStyle = '#0f1113'; ctx.fillRect(x, y, t, 2); ctx.fillRect(x, y, 2, t);
     }
   }
 }
 
-function drawPixelWalls() {
-  ctx.fillStyle = '#2d1616'; // Muro perimetral
-  ctx.fillRect(0, 0, V_WIDTH, 30); // Techo
-  ctx.fillRect(0, V_HEIGHT - 20, V_WIDTH, 20); // Suelo inferior
-  ctx.fillRect(0, 0, 20, V_HEIGHT); // Izquierda
-  ctx.fillRect(V_WIDTH - 20, 0, 20, V_HEIGHT); // Derecha
-
-  // Detalles de tuberías pixeladas en la pared superior
-  ctx.fillStyle = '#5a2a18';
-  ctx.fillRect(20, 12, V_WIDTH - 40, 6);
-}
-
-function drawLeonPixelArt(p) {
-  ctx.save();
-  ctx.translate(p.x, p.y);
-
-  // Sombras del personaje
-  ctx.fillStyle = 'rgba(0,0,0,0.4)';
-  ctx.fillRect(-10, 10, 20, 6);
-
-  // 1. Piernas / Botas (Píxeles oscuros)
-  ctx.fillStyle = '#111115';
-  ctx.fillRect(-8, 4, 6, 8);
-  ctx.fillRect(2, 4, 6, 8);
-
-  // 2. Pantalón táctico (Azul Grisáceo RE2/RE4)
-  ctx.fillStyle = '#202a3a';
-  ctx.fillRect(-8, -2, 16, 7);
-
-  // 3. Chaleco Táctico / Torso
-  ctx.fillStyle = '#151922'; 
-  ctx.fillRect(-9, -12, 18, 11);
-  // Detalles del arnés de Leon
-  ctx.fillStyle = '#3a2218';
-  ctx.fillRect(-9, -8, 18, 2);
-
-  // 4. Cabeza y Pelo Rubio Típico de Leon
-  ctx.fillStyle = '#eadeb2'; // Pelo Rubio Claro texturizado
-  ctx.fillRect(-7, -21, 14, 6);
-  ctx.fillStyle = '#cbb883'; // Sombras de pelo
-  ctx.fillRect(-7, -17, 3, 3);
-  ctx.fillRect(4, -17, 3, 3);
-  
-  // Piel de la cara
-  ctx.fillStyle = '#ffd0a1';
-  ctx.fillRect(-5, -15, 10, 4);
-
-  ctx.restore();
-}
-
-// Bucle de actualización técnica
 function updateGame() {
   if (!gameRunning) return;
 
-  // Movimiento de Leon
+  // Mover a Leon
   let mx = 0, my = 0;
-  if (keys['w']) my = -1;
-  if (keys['s']) my = 1;
-  if (keys['a']) mx = -1;
-  if (keys['d']) mx = 1;
+  if (keys['w']) my = -1; if (keys['s']) my = 1;
+  if (keys['a']) mx = -1; if (keys['d']) mx = 1;
+  player.x += mx * player.speed; player.y += my * player.speed;
 
-  // Normalizar diagonales
-  if (mx !== 0 && my !== 0) { mx *= 0.707; my *= 0.707; }
+  if (player.x < 35) player.x = 35; if (player.x > V_WIDTH - 35) player.x = V_WIDTH - 35;
+  if (player.y < 50) player.y = 50; if (player.y > V_HEIGHT - 35) player.y = V_HEIGHT - 35;
 
-  player.x += mx * player.speed;
-  player.y += my * player.speed;
+  // Disparar
+  if (keys['arrowup']) fireBullet('up');
+  if (keys['arrowdown']) fireBullet('down');
+  if (keys['arrowleft']) fireBullet('left');
+  if (keys['arrowright']) fireBullet('right');
 
-  // Límites de colisión de paredes
-  if (player.x < 32) player.x = 32;
-  if (player.x > V_WIDTH - 32) player.x = V_WIDTH - 32;
-  if (player.y < 45) player.y = 45;
-  if (player.y > V_HEIGHT - 32) player.y = V_HEIGHT - 32;
+  // Actualizar Balas
+  bullets.forEach((b, bi) => {
+    b.x += b.vx; b.y += b.vy;
+    if (b.x < 10 || b.x > V_WIDTH - 10 || b.y < 10 || b.y > V_HEIGHT - 10) bullets.splice(bi, 1);
+  });
 
-  // Auto Disparo con flechas en PC
-  if (keys['arrowup']) fireBullet('arrowup');
-  if (keys['arrowdown']) fireBullet('arrowdown');
-  if (keys['arrowleft']) fireBullet('arrowleft');
-  if (keys['arrowright']) fireBullet('arrowright');
+  // IA Zombis de Umbrella
+  if (Math.random() < 0.02) spawnZombie();
 
-  // Mover Balas
-  bullets.forEach((b, i) => {
-    b.x += b.vx;
-    b.y += b.vy;
-    // Borrar balas fuera del mapa
-    if (b.x < 15 || b.x > V_WIDTH - 15 || b.y < 25 || b.y > V_HEIGHT - 15) {
-      bullets.splice(i, 1);
-    }
+  enemies.forEach((e, ei) => {
+    let dx = player.x - e.x; let dy = player.y - e.y;
+    let dist = Math.sqrt(dx*dx + dy*dy);
+    if (dist > 0) { e.x += (dx/dist) * e.speed; e.y += (dy/dist) * e.speed; }
+
+    // Colisión Bala - Zombi
+    bullets.forEach((b, bi) => {
+      let bdx = b.x - e.x; let bdy = b.y - e.y;
+      if (Math.sqrt(bdx*bdx + bdy*bdy) < e.size/2) {
+        e.hp--; bullets.splice(bi, 1);
+        if (e.hp <= 0) { enemies.splice(ei, 1); kills++; document.getElementById('kill-count').innerText = kills; }
+      }
+    });
+
+    // Daño a Leon
+    if (dist < 18) { player.hp -= 0.2; document.getElementById('hud-hp').style.width = player.hp + '%'; }
   });
 }
 
-// Bucle de renderizado gráfico
 function renderGame() {
   ctx.clearRect(0, 0, V_WIDTH, V_HEIGHT);
+  drawMetalFloor();
 
-  // Dibujar Escenario
-  drawMetalFloorTextured();
-  drawPixelWalls();
-
-  // Dibujar Balas Réquiem (Láseres brillantes)
+  // Dibujar Balas
   bullets.forEach(b => {
-    ctx.fillStyle = '#ff3333';
-    ctx.fillRect(b.x - 2, b.y - 2, b.size, b.size);
-    ctx.fillStyle = '#ffffff'; // Centro brillante de la bala
-    ctx.fillRect(b.x - 1, b.y - 1, b.size - 2, b.size - 2);
+    ctx.fillStyle = '#ffff00'; ctx.fillRect(b.x - 2, b.y - 2, b.size, b.size);
   });
 
-  // Dibujar Jugador
-  drawLeonPixelArt(player);
+  // Dibujar Zombis (Pixel Art de Umbrella)
+  enemies.forEach(e => {
+    ctx.fillStyle = '#335c33'; ctx.fillRect(e.x - 8, e.y - 12, 16, 24); // Cuerpo
+    ctx.fillStyle = '#7a3b1e'; ctx.fillRect(e.x - 8, e.y + 4, 16, 4);   // Pantalón roto
+  });
+
+  // Dibujar a Leon S. Kennedy
+  ctx.fillStyle = '#eadeb2'; ctx.fillRect(player.x - 6, player.y - 20, 12, 6); // Pelo rubio
+  ctx.fillStyle = '#151922'; ctx.fillRect(player.x - 8, player.y - 14, 16, 14); // Traje azul oscuro
+  ctx.fillStyle = '#202a3a'; ctx.fillRect(player.x - 7, player.y, 14, 8); // Pantalón
 }
 
-function gameLoop() {
-  updateGame();
-  renderGame();
-  if (gameRunning) requestAnimationFrame(gameLoop);
-}
+function gameLoop() { updateGame(); renderGame(); if (gameRunning) requestAnimationFrame(gameLoop); }
 
-// Activadores de Interfaz
-const startBtn = document.getElementById('start-game-trigger');
-const rExitBtn = document.getElementById('r-exit-btn');
-
-startBtn.addEventListener('click', () => {
-  gameWrapper.style.display = 'block';
-  document.body.classList.add('playing-game');
-  gameRunning = true;
-  resizeGame();
-  requestAnimationFrame(gameLoop);
+document.getElementById('start-game-trigger').addEventListener('click', () => {
+  gameWrapper.style.display = 'block'; gameRunning = true; resizeGame(); requestAnimationFrame(gameLoop);
 });
-
-function salirDeSimulacion() {
-  gameWrapper.style.display = 'none';
-  document.body.classList.remove('playing-game');
-  gameRunning = false;
-}
-rExitBtn.addEventListener('click', salirDeSimulacion);
-window.addEventListener('keydown', e => { if (e.key === 'Escape') salirDeSimulacion(); });
-
+document.getElementById('r-exit-btn').addEventListener('click', () => { gameWrapper.style.display = 'none'; gameRunning = false; });
 
 // ══════════════════════════════════════════
-// ORIGINAL BLOOD DRIPS AND THREE.JS SCRIPTS
+// ARREGLO DE THREE.JS ORIGINAL (SIN ERRORES)
 // ══════════════════════════════════════════
 const dripContainer = document.getElementById('blood-drip');
-for (let i = 0; i < 12; i++) {
-  const d = document.createElement('div'); d.className = 'drip';
-  d.style.left = Math.random() * 100 + '%'; d.style.width = (1.5 + Math.random() * 3) + 'px';
-  d.style.animationDuration = (2 + Math.random() * 4) + 's'; d.style.animationDelay = (Math.random() * 6) + 's';
-  dripContainer.appendChild(d);
+for (let i = 0; i < 8; i++) {
+  const d = document.createElement('div'); d.className = 'drip'; d.style.left = Math.random() * 100 + '%';
+  d.style.animationDuration = (2 + Math.random() * 3) + 's'; dripContainer.appendChild(d);
 }
 
-// Rediseño y acople de renders 3D de las salas inferiores para que no interfieran
-const BURNT = new THREE.Color('#8B4513');
-function makeRenderer(canvas) {
-  const r = new THREE.WebGLRenderer({canvas, antialias:true, alpha:true});
-  r.setPixelRatio(Math.min(window.devicePixelRatio,2)); return r;
-}
-function fitRenderer(renderer, canvas, camera) {
-  const w = canvas.clientWidth, h = canvas.clientHeight; if (w===0||h===0) return;
-  renderer.setSize(w,h,false); camera.aspect = w/h; camera.updateProjectionMatrix();
-}
+function makeRenderer(c) { return new THREE.WebGLRenderer({canvas:c, antialias:true, alpha:true}); }
+function fit(r, c, cam) { r.setSize(c.clientWidth, c.clientHeight, false); cam.aspect = c.clientWidth/c.clientHeight; cam.updateProjectionMatrix(); }
 
 (function(){
-  const canvas = document.getElementById('hero-canvas'); const renderer = makeRenderer(canvas);
-  const scene = new THREE.Scene(); const camera = new THREE.PerspectiveCamera(55,1,0.1,100); camera.position.z = 5;
-  fitRenderer(renderer, canvas, camera); window.addEventListener('resize', ()=>fitRenderer(renderer,canvas,camera));
-  scene.add(new THREE.AmbientLight(0x1a0a05, 2));
-  const core = new THREE.Mesh(new THREE.IcosahedronGeometry(1.2,1), new THREE.MeshPhotonMaterial||new THREE.MeshStandardMaterial({color:0x1a0805}));
-  scene.add(core);
-  function loop(){ requestAnimationFrame(loop); core.rotation.y+=0.005; renderer.render(scene,camera); } loop();
+  const c = document.getElementById('hero-canvas'); const r = makeRenderer(c);
+  const s = new THREE.Scene(); const cam = new THREE.PerspectiveCamera(50,1,0.1,100); cam.position.z = 4;
+  fit(r,c,cam); s.add(new THREE.AmbientLight(0xffffff, 0.5));
+  // Solución al error: Cambiado a MeshStandardMaterial
+  const m = new THREE.Mesh(new THREE.IcosahedronGeometry(1,0), new THREE.MeshStandardMaterial({color:0x6b0000, wireframe:true}));
+  s.add(m); function lp(){ requestAnimationFrame(lp); m.rotation.y+=0.01; r.render(s,cam); } lp();
 })();
-(function(){
-  const canvas = document.getElementById('historia-canvas'); const renderer = makeRenderer(canvas);
-  const scene = new THREE.Scene(); const camera = new THREE.PerspectiveCamera(60,1,0.1,100); camera.position.z = 5;
-  const ro = new ResizeObserver(()=>fitRenderer(renderer,canvas,camera)); ro.observe(canvas);
-  const dodec = new THREE.Mesh(new THREE.DodecahedronGeometry(1.1,0), new THREE.MeshStandardMaterial({color:0x1a0805})); scene.add(dodec);
-  function loop(){ requestAnimationFrame(loop); dodec.rotation.y+=0.004; renderer.render(scene,camera); } loop();
-})();
-(function(){
-  const canvas = document.getElementById('libro-canvas'); const renderer = makeRenderer(canvas);
-  const scene = new THREE.Scene(); const camera = new THREE.PerspectiveCamera(50,1,0.1,100); camera.position.z = 5;
-  const ro = new ResizeObserver(()=>fitRenderer(renderer,canvas,camera)); ro.observe(canvas);
-  const book = new THREE.Mesh(new THREE.BoxGeometry(1.6,2,0.3), new THREE.MeshStandardMaterial({color:0x1a0805})); scene.add(book);
-  function loop(){ requestAnimationFrame(loop); book.rotation.y=Math.sin(Date.now()*0.001)*0.4; renderer.render(scene,camera); } loop();
-})();
-
-const revealEls = document.querySelectorAll('.reveal, .timeline-item');
-const revealObs = new IntersectionObserver((entries)=>{ entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('visible'); }); },{threshold:0.1});
-revealEls.forEach(el=>revealObs.observe(el));
 </script>
 </body>
 </html>
