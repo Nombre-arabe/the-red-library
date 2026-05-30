@@ -29,7 +29,6 @@ body{
   cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Ccircle cx='10' cy='10' r='4' fill='%238B4513'/%3E%3Ccircle cx='10' cy='10' r='8' fill='none' stroke='%23A0522D' stroke-width='1'/%3E%3C/svg%3E") 10 10, crosshair;
 }
 
-/* Bloqueo de scroll dinámico al jugar */
 body.playing-game {
   overflow: hidden !important;
   touch-action: none;
@@ -45,14 +44,12 @@ body::before{
   pointer-events:none;
 }
 
-/* ── GRAIN ── */
 body::after{
   content:'';position:fixed;inset:0;z-index:1;
   background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.06'/%3E%3C/svg%3E");
   background-size:256px;pointer-events:none;opacity:0.5;
 }
 
-/* ── BLOOD DRIP TOP ── */
 .blood-drip{
   position:fixed;top:0;left:0;right:0;z-index:200;
   height:80px;pointer-events:none;overflow:hidden;
@@ -67,9 +64,7 @@ body::after{
   100%{height:80px;opacity:0}
 }
 
-/* ══════════════════════════════════
-   NAVIGATION
-══════════════════════════════════ */
+/* ── NAVIGATION ── */
 nav{
   position:fixed;top:0;left:0;right:0;z-index:300;
   display:flex;align-items:center;justify-content:space-between;
@@ -107,15 +102,8 @@ nav{
 }
 .nav-emblem svg{width:100%;height:100%;}
 
-/* ══════════════════════════════════
-   SECTION BASE
-══════════════════════════════════ */
-section{
-  position:relative;z-index:2;
-  min-height:100vh;overflow:hidden;
-}
+section{position:relative;z-index:2;min-height:100vh;overflow:hidden;}
 
-/* ── DECORATIVE BORDER ── */
 .section-frame{
   position:absolute;inset:20px;pointer-events:none;z-index:5;
   border:1px solid rgba(139,69,19,0.2);
@@ -128,7 +116,7 @@ section{
 .section-frame::after{bottom:-1px;right:-1px;border-width:0 2px 2px 0;}
 
 /* ══════════════════════════════════
-   NUEVA SECCIÓN: JUEGO PRINCIPAL
+   SECCIÓN: JUEGO PRINCIPAL
 ══════════════════════════════════ */
 #juego-principal {
   background: radial-gradient(circle at center, #1f0505 0%, var(--darkbg) 80%);
@@ -139,422 +127,156 @@ section{
   padding-top: 100px;
   text-align: center;
 }
-.game-hero-container {
-  max-width: 800px;
-  padding: 2rem;
-  z-index: 10;
-}
+.game-hero-container { max-width: 800px; padding: 2rem; z-index: 10; }
 .game-tag {
-  font-family: 'Oswald', sans-serif;
-  color: var(--blood);
-  font-size: 0.9rem;
-  letter-spacing: 0.4em;
-  text-transform: uppercase;
-  margin-bottom: 1rem;
+  font-family: 'Oswald', sans-serif; color: var(--blood); font-size: 0.9rem;
+  letter-spacing: 0.4em; text-transform: uppercase; margin-bottom: 1rem;
   text-shadow: 0 0 10px rgba(107,0,0,0.6);
 }
 .game-main-btn {
-  background: rgba(10, 7, 5, 0.8);
-  border: 2px solid var(--blood);
-  color: var(--macadamia);
-  font-family: 'Special Elite', cursive;
-  font-size: 1.5rem;
-  padding: 1.2rem 3rem;
-  letter-spacing: 0.15em;
-  cursor: pointer;
-  box-shadow: 0 0 20px rgba(107, 0, 0, 0.4);
-  transition: all 0.4s ease;
-  margin-top: 1.5rem;
-  position: relative;
-  overflow: hidden;
+  background: rgba(10, 7, 5, 0.8); border: 2px solid var(--blood); color: var(--macadamia);
+  font-family: 'Special Elite', cursive; font-size: 1.5rem; padding: 1.2rem 3rem;
+  letter-spacing: 0.15em; cursor: pointer; box-shadow: 0 0 20px rgba(107, 0, 0, 0.4);
+  transition: all 0.4s ease; margin-top: 1.5rem; position: relative; overflow: hidden;
 }
 .game-main-btn:hover {
-  background: var(--blood);
-  color: var(--lightgray);
-  box-shadow: 0 0 35px var(--blood);
-  transform: scale(1.05);
+  background: var(--blood); color: var(--lightgray); box-shadow: 0 0 35px var(--blood); transform: scale(1.05);
 }
 
 /* INTERFAZ DEL JUEGO EN PANTALLA COMPLETA */
 #fullscreen-game-wrapper {
-  position: fixed;
-  inset: 0;
-  background: #000000;
-  z-index: 9999;
-  display: none; /* Se activa por JS */
-  width: 100vw;
-  height: 100vh;
+  position: fixed; inset: 0; background: #000000; z-index: 9999;
+  display: none; width: 100vw; height: 100vh; user-select: none;
 }
-/* Contenedor donde renderizaremos tu juego más adelante */
 #game-canvas-container {
-  width: 100%;
-  height: 100%;
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 100%; height: 100%; position: relative; background: #050505;
 }
-.game-placeholder-text {
-  font-family: 'Special Elite', cursive;
-  color: rgba(200,168,130,0.3);
-  font-size: 1.5rem;
-  text-align: center;
-  pointer-events: none;
+#gameCanvas {
+  width: 100%; height: 100%; display: block;
+  image-rendering: pixelated; image-rendering: crisp-edges;
 }
 
-/* BOTÓN FLOTANTE "R" (Móviles / Salida o Entrada) */
+/* INTERFAZ HUD TÁCTIL/PRO */
+.game-hud-overlay {
+  position: absolute; top: 20px; left: 90px; right: 20px;
+  display: flex; justify-content: space-between; align-items: center;
+  pointer-events: none; font-family: 'Special Elite', cursive; color: var(--macadamia);
+  z-index: 10002; text-shadow: 2px 2px 0px #000;
+}
+.hud-hp-bar {
+  width: 180px; height: 14px; background: #220000; border: 2px solid var(--blood);
+  position: relative; margin-top: 5px; box-shadow: 0 0 8px var(--blood);
+}
+.hud-hp-fill { width: 100%; height: 100%; background: #990000; transition: width 0.2s; }
+
+/* ZONAS TÁCTILES TRANSPARENTES (REQUISITO RE-IMAGINADO) */
+.touch-zone-left {
+  position: absolute; left: 0; top: 0; bottom: 0; width: 45vw;
+  z-index: 10001; cursor: pointer;
+}
+.touch-zone-right {
+  position: absolute; right: 0; top: 0; bottom: 0; width: 45vw;
+  z-index: 10001; cursor: pointer;
+}
+.touch-hint-box {
+  position: absolute; bottom: 15px; font-family: 'Oswald', sans-serif;
+  font-size: 0.65rem; color: rgba(200,168,130,0.3); letter-spacing: 0.1em;
+  pointer-events: none; text-align: center; width: 100%;
+}
+
 .mobile-r-btn {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  width: 50px;
-  height: 50px;
-  background: rgba(107, 0, 0, 0.85);
-  border: 2px solid var(--macadamia);
-  border-radius: 50%;
-  color: var(--macadamia);
-  font-family: 'Special Elite', cursive;
-  font-size: 1.6rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  z-index: 10000;
-  box-shadow: 0 0 15px rgba(0,0,0,0.5);
-  transition: transform 0.2s active, background 0.3s;
-}
-.mobile-r-btn:active {
-  transform: scale(0.9);
-  background: var(--burnt);
+  position: absolute; top: 20px; left: 20px; width: 50px; height: 50px;
+  background: rgba(107, 0, 0, 0.85); border: 2px solid var(--macadamia);
+  border-radius: 50%; color: var(--macadamia); font-family: 'Special Elite', cursive;
+  font-size: 1.6rem; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; z-index: 10003; box-shadow: 0 0 15px rgba(0,0,0,0.5);
 }
 
-/* CONTROLES TÁCTILES SIMULADOS (Zona de juego quieta) */
-.touch-controls-layer {
-  position: absolute;
-  bottom: 30px;
-  left: 0;
-  right: 0;
-  display: flex;
-  justify-content: space-between;
-  padding: 0 40px;
-  pointer-events: none; /* Deja pasar clicks al juego */
-  z-index: 10001;
-}
-.touch-btn {
-  width: 65px;
-  height: 65px;
-  background: rgba(40, 30, 25, 0.6);
-  border: 1px solid rgba(200,168,130,0.4);
-  border-radius: 50%;
-  pointer-events: auto; /* Activa clicks solo para los botones */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--lightgray);
-  font-family: 'Oswald', sans-serif;
-  font-size: 0.8rem;
-  user-select: none;
-}
+.pc-hint { margin-top: 1rem; font-size: 0.75rem; color: var(--burnt); letter-spacing: 0.1em; }
 
-/* Pistas visuales de PC en la pantalla de carga */
-.pc-hint {
-  margin-top: 1rem;
-  font-size: 0.75rem;
-  color: var(--burnt);
-  letter-spacing: 0.1em;
-}
-
-/* ══════════════════════════════════
-   SECTION 1 — MAIN / HERO (ORIGINAL)
-══════════════════════════════════ */
-#main{
-  background:radial-gradient(ellipse at center, #1a0f0a 0%, var(--darkbg) 70%);
-  display:grid;grid-template-rows:auto 1fr;
-  padding-top:80px;
-}
-
-.hero-title-block{
-  text-align:center;padding:3rem 2rem 1rem;
-  position:relative;
-}
+/* ── ORIGINAL CONTENT STYLES (PRESERVADOS) ── */
+#main{ background:radial-gradient(ellipse at center, #1a0f0a 0%, var(--darkbg) 70%); display:grid; grid-template-rows:auto 1fr; padding-top:80px; }
+.hero-title-block{ text-align:center; padding:3rem 2rem 1rem; position:relative; }
 .hero-eyebrow{
-  font-family:'Oswald',sans-serif;font-size:0.7rem;
-  letter-spacing:0.4em;text-transform:uppercase;color:var(--coolblue);
-  margin-bottom:1rem;display:flex;align-items:center;justify-content:center;gap:1rem;
+  font-family:'Oswald',sans-serif; font-size:0.7rem; letter-spacing:0.4em; text-transform:uppercase; color:var(--coolblue);
+  margin-bottom:1rem; display:flex; align-items:center; justify-content:center; gap:1rem;
 }
-.hero-eyebrow::before,.hero-eyebrow::after{
-  content:'';display:block;width:40px;height:1px;background:var(--coolblue);opacity:0.5;
-}
+.hero-eyebrow::before,.hero-eyebrow::after{ content:''; display:block; width:40px; height:1px; background:var(--coolblue); opacity:0.5; }
 .main-title{
-  font-family:'Special Elite',cursive;
-  font-size:clamp(3rem,8vw,8rem);
-  line-height:0.9;letter-spacing:0.05em;
-  color:var(--macadamia);
-  text-shadow:
-    0 0 30px rgba(139,69,19,0.6),
-    0 0 80px rgba(107,0,0,0.3),
-    3px 3px 0 rgba(107,0,0,0.4);
-  animation:titleFlicker 8s infinite;
-  margin-bottom:0.5rem;
+  font-family:'Special Elite',cursive; font-size:clamp(3rem,8vw,8rem); line-height:0.9; letter-spacing:0.05em; color:var(--macadamia);
+  text-shadow: 0 0 30px rgba(139,69,19,0.6), 0 0 80px rgba(107,0,0,0.3), 3px 3px 0 rgba(107,0,0,0.4); animation:titleFlicker 8s infinite; margin-bottom:0.5rem;
 }
-@keyframes titleFlicker{
-  0%,95%,100%{opacity:1;}
-  96%{opacity:0.85;}
-  97%{opacity:1;}
-  98%{opacity:0.9;}
-  99%{opacity:1;}
-}
-.title-sub{
-  font-family:'Oswald',sans-serif;font-size:0.9rem;
-  letter-spacing:0.5em;text-transform:uppercase;color:var(--burnt);
-  margin-bottom:0.5rem;
-}
-.title-divider{
-  display:flex;align-items:center;justify-content:center;gap:1rem;
-  margin:1.5rem auto;max-width:500px;
-}
-.title-divider span{height:1px;flex:1;background:linear-gradient(to right,transparent,var(--burnt),transparent);}
-.title-divider svg{width:20px;height:20px;fill:var(--blood);}
-
-/* 3D CANVAS HERO */
-.hero-canvas-wrap{
-  display:grid;grid-template-columns:1fr 400px 1fr;
-  align-items:center;gap:2rem;
-  padding:0 4rem 3rem;
-  max-width:1400px;margin:0 auto;width:100%;
-}
-#hero-canvas{
-  width:400px;height:400px;display:block;
-  filter:drop-shadow(0 0 30px rgba(107,0,0,0.5));
-}
-.hero-side-text{
-  display:flex;flex-direction:column;gap:1.5rem;
-}
-.hero-stat{
-  border-left:2px solid var(--blood);
-  padding-left:1rem;
-}
-.hero-stat-label{
-  font-family:'Oswald',sans-serif;font-size:0.6rem;
-  letter-spacing:0.25em;text-transform:uppercase;color:var(--burnt);
-  margin-bottom:0.25rem;
-}
-.hero-stat-val{
-  font-family:'Special Elite',cursive;font-size:1.4rem;
-  color:var(--macadamia);line-height:1.1;
-}
-.hero-stat-val small{
-  font-family:'Courier Prime',monospace;font-size:0.75rem;
-  color:var(--lightgray);display:block;margin-top:0.2rem;
-}
-
-/* SCROLL PROMPT */
-.scroll-prompt{
-  text-align:center;padding-bottom:2rem;
-  font-family:'Oswald',sans-serif;font-size:0.6rem;letter-spacing:0.3em;
-  text-transform:uppercase;color:var(--burnt);opacity:0.6;
-  animation:pulse 2s infinite;
-}
+@keyframes titleFlicker{ 0%,95%,100%{opacity:1;} 96%{opacity:0.85;} 97%{opacity:1;} 98%{opacity:0.9;} 99%{opacity:1;} }
+.title-sub{ font-family:'Oswald',sans-serif; font-size:0.9rem; letter-spacing:0.5em; text-transform:uppercase; color:var(--burnt); margin-bottom:0.5rem; }
+.title-divider{ display:flex; align-items:center; justify-content:center; gap:1rem; margin:1.5rem auto; max-width:500px; }
+.title-divider span{ height:1px; flex:1; background:linear-gradient(to right,transparent,var(--burnt),transparent); }
+.title-divider svg{ width:20px; height:20px; fill:var(--blood); }
+.hero-canvas-wrap{ display:grid; grid-template-columns:1fr 400px 1fr; align-items:center; gap:2rem; padding:0 4rem 3rem; max-width:1400px; margin:0 auto; width:100%; }
+#hero-canvas{ width:400px; height:400px; display:block; filter:drop-shadow(0 0 30px rgba(107,0,0,0.5)); }
+.hero-side-text{ display:flex; flex-direction:column; gap:1.5rem; }
+.hero-stat{ border-left:2px solid var(--blood); padding-left:1rem; }
+.hero-stat-label{ font-family:'Oswald',sans-serif; font-size:0.6rem; letter-spacing:0.25em; text-transform:uppercase; color:var(--burnt); margin-bottom:0.25rem; }
+.hero-stat-val{ font-family:'Special Elite',cursive; font-size:1.4rem; color:var(--macadamia); line-height:1.1; }
+.hero-stat-val small{ font-family:'Courier Prime',monospace; font-size:0.75rem; color:var(--lightgray); display:block; margin-top:0.2rem; }
+.scroll-prompt{ text-align:center; padding-bottom:2rem; font-family:'Oswald',sans-serif; font-size:0.65rem; letter-spacing:0.3em; text-transform:uppercase; color:var(--burnt); opacity:0.6; animation:pulse 2s infinite; }
 @keyframes pulse{0%,100%{opacity:0.4;}50%{opacity:0.9;}}
 
-/* ══════════════════════════════════
-   SECTION 2 — HISTORIA (ORIGINAL)
-══════════════════════════════════ */
-#historia{
-  background:
-    linear-gradient(180deg,var(--darkbg) 0%, #120c07 50%, var(--darkbg) 100%),
-    repeating-linear-gradient(0deg,rgba(139,69,19,0.03) 0px, rgba(139,69,19,0.03) 1px, transparent 1px, transparent 40px),
-    repeating-linear-gradient(90deg,rgba(139,69,19,0.02) 0px, rgba(139,69,19,0.02) 1px, transparent 1px, transparent 40px);
-  padding:6rem 0;
-}
-.historia-inner{
-  max-width:1200px;margin:0 auto;padding:0 3rem;
-}
-.historia-header{
-  display:flex;align-items:flex-start;gap:3rem;margin-bottom:4rem;
-}
-.historia-num{
-  font-family:'Special Elite',cursive;font-size:8rem;line-height:0.8;
-  color:rgba(139,69,19,0.15);flex-shrink:0;
-  -webkit-text-stroke:1px rgba(139,69,19,0.3);
-}
-.historia-title-group{flex:1;}
-.historia-chapter{
-  font-family:'Oswald',sans-serif;font-size:0.65rem;letter-spacing:0.3em;
-  text-transform:uppercase;color:var(--coolblue);margin-bottom:0.5rem;
-}
-.historia-h2{
-  font-family:'Special Elite',cursive;
-  font-size:clamp(2rem,4vw,4rem);
-  color:var(--macadamia);
-  text-shadow:0 0 20px rgba(107,0,0,0.4);
-  line-height:1.1;margin-bottom:1rem;
-}
-.historia-tagline{
-  font-size:0.85rem;color:var(--lightgray);line-height:1.8;max-width:500px;
-  border-left:2px solid var(--blood);padding-left:1rem;
-}
+#historia{ background: linear-gradient(180deg,var(--darkbg) 0%, #120c07 50%, var(--darkbg) 100%); padding:6rem 0; }
+.historia-inner{ max-width:1200px; margin:0 auto; padding:0 3rem; }
+.historia-header{ display:flex; align-items:flex-start; gap:3rem; margin-bottom:4rem; }
+.historia-num{ font-family:'Special Elite',cursive; font-size:8rem; line-height:0.8; color:rgba(139,69,19,0.15); flex-shrink:0; -webkit-text-stroke:1px rgba(139,69,19,0.3); }
+.historia-title-group{ flex:1; }
+.historia-chapter{ font-family:'Oswald',sans-serif; font-size:0.65rem; letter-spacing:0.3em; text-transform:uppercase; color:var(--coolblue); margin-bottom:0.5rem; }
+.historia-h2{ font-family:'Special Elite',cursive; font-size:clamp(2rem,4vw,4rem); color:var(--macadamia); text-shadow:0 0 20px rgba(107,0,0,0.4); line-height:1.1; margin-bottom:1rem; }
+.historia-tagline{ font-size:0.85rem; color:var(--lightgray); line-height:1.8; max-width:500px; border-left:2px solid var(--blood); padding-left:1rem; }
+.timeline{ position:relative; padding-left:2rem; }
+.timeline::before{ content:''; position:absolute; left:0; top:0; bottom:0; width:1px; background:linear-gradient(to bottom, var(--blood), rgba(139,69,19,0.3), var(--blood)); }
+.timeline-item{ position:relative; padding-left:2.5rem; margin-bottom:3.5rem; opacity:0; transform:translateX(-30px); transition:opacity 0.7s ease,transform 0.7s ease; }
+.timeline-item.visible{ opacity:1; transform:translateX(0); }
+.timeline-dot{ position:absolute; left:-2.5rem; top:0.4rem; width:12px; height:12px; border-radius:50%; background:var(--blood); animation:dotPulse 2s infinite; }
+@keyframes dotPulse{ 0%,100%{box-shadow:0 0 6px var(--blood);} 50%{box-shadow:0 0 15px var(--blood),0 0 30px rgba(107,0,0,0.6);} }
+.timeline-year{ font-family:'Oswald',sans-serif; font-size:0.65rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--burnt); margin-bottom:0.4rem; }
+.timeline-title{ font-family:'Special Elite',cursive; font-size:1.3rem; color:var(--macadamia); margin-bottom:0.6rem; }
+.timeline-body{ font-size:0.85rem; line-height:1.9; color:var(--lightgray); max-width:700px; }
+.timeline-body em{ color:var(--macadamia); font-style:italic; }
+.historia-split{ display:grid; grid-template-columns:1fr 1fr; gap:4rem; align-items:center; margin-top:5rem; }
+.historia-canvas-wrap{ position:relative; }
+.historia-canvas-wrap::before{ content:''; position:absolute; inset:-20px; border:1px solid rgba(139,69,19,0.15); pointer-events:none; }
+#historia-canvas{ width:100%; aspect-ratio:1; display:block; max-width:450px; margin:0 auto; }
+.lore-cards{ display:flex; flex-direction:column; gap:1rem; }
+.lore-card{ background:rgba(139,69,19,0.05); border:1px solid rgba(139,69,19,0.15); padding:1.2rem 1.5rem; position:relative; overflow:hidden; transition:background 0.3s,border-color 0.3s; }
+.lore-card::before{ content:''; position:absolute; left:0; top:0; bottom:0; width:2px; background:var(--blood); }
+.lore-card:hover{ background:rgba(139,69,19,0.1); border-color:rgba(139,69,19,0.4); }
+.lore-card-title{ font-family:'Special Elite',cursive; font-size:1rem; color:var(--macadamia); margin-bottom:0.4rem; display:flex; align-items:center; gap:0.7rem; }
+.lore-card-title span{ display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--blood); }
+.lore-card-text{ font-size:0.78rem; line-height:1.7; color:var(--lightgray); }
 
-/* TIMELINE */
-.timeline{
-  position:relative;padding-left:2rem;
-}
-.timeline::before{
-  content:'';position:absolute;left:0;top:0;bottom:0;width:1px;
-  background:linear-gradient(to bottom, var(--blood), rgba(139,69,19,0.3), var(--blood));
-}
-.timeline-item{
-  position:relative;padding-left:2.5rem;margin-bottom:3.5rem;
-  opacity:0;transform:translateX(-30px);
-  transition:opacity 0.7s ease,transform 0.7s ease;
-}
-.timeline-item.visible{opacity:1;transform:translateX(0);}
-.timeline-dot{
-  position:absolute;left:-2.5rem;top:0.4rem;
-  width:12px;height:12px;border-radius:50%;
-  background:var(--blood);
-  box-shadow:0 0 10px var(--blood),0 0 20px rgba(107,0,0,0.5);
-  animation:dotPulse 2s infinite;
-}
-@keyframes dotPulse{
-  0%,100%{box-shadow:0 0 6px var(--blood);}
-  50%{box-shadow:0 0 15px var(--blood),0 0 30px rgba(107,0,0,0.6);}
-}
-.timeline-year{
-  font-family:'Oswald',sans-serif;font-size:0.65rem;letter-spacing:0.2em;
-  text-transform:uppercase;color:var(--burnt);margin-bottom:0.4rem;
-}
-.timeline-title{
-  font-family:'Special Elite',cursive;font-size:1.3rem;
-  color:var(--macadamia);margin-bottom:0.6rem;
-}
-.timeline-body{
-  font-size:0.85rem;line-height:1.9;color:var(--lightgray);max-width:700px;
-}
-.timeline-body em{color:var(--macadamia);font-style:italic;}
-
-/* HISTORIA 3D SIDE */
-.historia-split{
-  display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;
-  margin-top:5rem;
-}
-.historia-canvas-wrap{
-  position:relative;
-}
-.historia-canvas-wrap::before{
-  content:'';position:absolute;inset:-20px;
-  border:1px solid rgba(139,69,19,0.15);pointer-events:none;
-}
-#historia-canvas{width:100%;aspect-ratio:1;display:block;max-width:450px;margin:0 auto;}
-
-.lore-cards{display:flex;flex-direction:column;gap:1rem;}
-.lore-card{
-  background:rgba(139,69,19,0.05);
-  border:1px solid rgba(139,69,19,0.15);
-  padding:1.2rem 1.5rem;
-  position:relative;overflow:hidden;
-  transition:background 0.3s,border-color 0.3s;
-}
-.lore-card::before{
-  content:'';position:absolute;left:0;top:0;bottom:0;width:2px;
-  background:var(--blood);
-}
-.lore-card:hover{background:rgba(139,69,19,0.1);border-color:rgba(139,69,19,0.4);}
-.lore-card-title{
-  font-family:'Special Elite',cursive;font-size:1rem;
-  color:var(--macadamia);margin-bottom:0.4rem;display:flex;align-items:center;gap:0.7rem;
-}
-.lore-card-title span{
-  display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--blood);
-}
-.lore-card-text{font-size:0.78rem;line-height:1.7;color:var(--lightgray);}
-
-/* ══════════════════════════════════
-   SECTION 3 — LIBRO (ORIGINAL)
-══════════════════════════════════ */
-#libro{
-  background:var(--darkbg);
-  display:flex;align-items:center;justify-content:center;
-  position:relative;overflow:hidden;
-}
-.libro-bg-glow{
-  position:absolute;inset:0;
-  background:radial-gradient(ellipse 60% 40% at 50% 50%, rgba(107,82,45,0.08) 0%, transparent 70%);
-}
-.libro-inner{
-  text-align:center;position:relative;z-index:2;padding:4rem 2rem;
-}
-#libro-canvas{
-  width:300px;height:300px;display:block;margin:0 auto 3rem;
-  filter:drop-shadow(0 0 40px rgba(139,69,19,0.4));
-  opacity:0.7;
-}
-.coming-soon-label{
-  font-family:'Oswald',sans-serif;font-size:0.65rem;letter-spacing:0.4em;
-  text-transform:uppercase;color:var(--burnt);margin-bottom:1rem;
-  display:flex;align-items:center;justify-content:center;gap:1rem;
-}
-.coming-soon-label::before,.coming-soon-label::after{content:'✦';color:var(--blood);font-size:0.5rem;}
-.coming-soon-title{
-  font-family:'Special Elite',cursive;
-  font-size:clamp(2.5rem,6vw,6rem);
-  color:var(--macadamia);
-  text-shadow:0 0 40px rgba(139,69,19,0.5);
-  margin-bottom:0.5rem;line-height:1;
-}
-.coming-soon-sub{
-  font-family:'Special Elite',cursive;
-  font-size:clamp(1.5rem,3vw,2.5rem);
-  color:var(--burnt);
-  letter-spacing:0.1em;margin-bottom:2rem;
-}
-.coming-soon-desc{
-  font-size:0.8rem;color:var(--lightgray);line-height:1.9;
-  max-width:420px;margin:0 auto 3rem;opacity:0.6;
-}
-.redacted-line{
-  display:block;
-  background:var(--burnt);color:transparent;
-  user-select:none;margin:0.3rem auto;
-  height:1.2em;
-}
-.redacted-line:nth-child(1){width:80%;}
-.redacted-line:nth-child(2){width:65%;}
-.redacted-line:nth-child(3){width:75%;}
-
-/* NOTIFY BOX */
-.notify-box{
-  display:inline-flex;align-items:center;gap:1rem;
-  border:1px solid rgba(139,69,19,0.3);padding:0.8rem 2rem;
-  font-family:'Oswald',sans-serif;font-size:0.7rem;letter-spacing:0.2em;
-  text-transform:uppercase;color:var(--lightgray);
-  background:rgba(139,69,19,0.05);
-  transition:background 0.3s,border-color 0.3s;cursor:pointer;
-}
+#libro{ background:var(--darkbg); display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden; }
+.libro-bg-glow{ position:absolute; inset:0; background:radial-gradient(ellipse 60% 40% at 50% 50%, rgba(107,82,45,0.08) 0%, transparent 70%); }
+.libro-inner{ text-align:center; position:relative; z-index:2; padding:4rem 2rem; }
+#libro-canvas{ width:300px; height:300px; display:block; margin:0 auto 3rem; filter:drop-shadow(0 0 40px rgba(139,69,19,0.4)); opacity:0.7; }
+.coming-soon-label{ font-family:'Oswald',sans-serif; font-size:0.65rem; letter-spacing:0.4em; text-transform:uppercase; color:var(--burnt); margin-bottom:1rem; display:flex; align-items:center; justify-content:center; gap:1rem; }
+.coming-soon-label::before,.coming-soon-label::after{ content:'✦'; color:var(--blood); font-size:0.5rem; }
+.coming-soon-title{ font-family:'Special Elite',cursive; font-size:clamp(2.5rem,6vw,6rem); color:var(--macadamia); text-shadow:0 0 40px rgba(139,69,19,0.5); margin-bottom:0.5rem; line-height:1; }
+.coming-soon-sub{ font-family:'Special Elite',cursive; font-size:clamp(1.5rem,3vw,2.5rem); color:var(--burnt); letter-spacing:0.1em; margin-bottom:2rem; }
+.coming-soon-desc{ font-size:0.8rem; color:var(--lightgray); line-height:1.9; max-width:420px; margin:0 auto 3rem; opacity:0.6; }
+.redacted-line{ display:block; background:var(--burnt); color:transparent; user-select:none; margin:0.3rem auto; height:1.2em; }
+.redacted-line:nth-child(1){width:80%;} .redacted-line:nth-child(2){width:65%;} .redacted-line:nth-child(3){width:75%;}
+.notify-box{ display:inline-flex; align-items:center; gap:1rem; border:1px solid rgba(139,69,19,0.3); padding:0.8rem 2rem; font-family:'Oswald',sans-serif; font-size:0.7rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--lightgray); background:rgba(139,69,19,0.05); transition:background 0.3s,border-color 0.3s; cursor:pointer; }
 .notify-box:hover{background:rgba(139,69,19,0.12);border-color:var(--burnt);}
 .notify-dot{width:6px;height:6px;border-radius:50%;background:var(--blood);animation:pulse 1.5s infinite;}
 
-/* SCROLL REVEAL */
 .reveal{opacity:0;transform:translateY(40px);transition:opacity 0.8s ease,transform 0.8s ease;}
 .reveal.visible{opacity:1;transform:translateY(0);}
 
-/* ── FOOTER ── */
-footer{
-  position:relative;z-index:2;
-  padding:2rem 3rem;
-  border-top:1px solid rgba(139,69,19,0.2);
-  display:flex;align-items:center;justify-content:space-between;
-  background:rgba(10,7,5,0.9);
-}
-footer p{font-family:'Courier Prime',monospace;font-size:0.65rem;color:var(--burnt);letter-spacing:0.1em;}
-.footer-emblem{font-family:'Special Elite',cursive;color:var(--macadamia);font-size:1rem;letter-spacing:0.2em;}
+footer{ position:relative; z-index:2; padding:2rem 3rem; border-top:1px solid rgba(139,69,19,0.2); display:flex; align-items:center; justify-content:space-between; background:rgba(10,7,5,0.9); }
+footer p{font-family:'Courier Prime',monospace; font-size:0.65rem; color:var(--burnt); letter-spacing:0.1em;}
+.footer-emblem{font-family:'Special Elite',cursive; color:var(--macadamia); font-size:1rem; letter-spacing:0.2em;}
 
-/* SCROLLBAR */
 ::-webkit-scrollbar{width:4px;}
 ::-webkit-scrollbar-track{background:var(--darkbg);}
 ::-webkit-scrollbar-thumb{background:var(--blood);}
 
-/* ── RESPONSIVE ── */
 @media(max-width:900px){
   .hero-canvas-wrap{grid-template-columns:1fr;justify-items:center;}
   #hero-canvas{width:300px;height:300px;}
@@ -574,24 +296,33 @@ footer p{font-family:'Courier Prime',monospace;font-size:0.65rem;color:var(--bur
 </head>
 <body>
 
-<!-- INTERFAZ DEL JUEGO COMPLETO (OCULTA POR DEFECTO) -->
+<!-- INTERFAZ COMPLETA DEL JUEGO -->
 <div id="fullscreen-game-wrapper">
-  <!-- Botón "R" para móviles o re-entrada -->
-  <button class="mobile-r-btn" id="r-exit-btn" title="Salir/Regresar">R</button>
+  <button class="mobile-r-btn" id="r-exit-btn">R</button>
   
-  <!-- Controles táctiles en pantalla -->
-  <div class="touch-controls-layer">
-    <div class="touch-btn">← Izq</div>
-    <div class="touch-btn">Acción</div>
-    <div class="touch-btn">Der →</div>
+  <!-- HUD PRINCIPAL -->
+  <div class="game-hud-overlay">
+    <div>
+      <div>LEON S. KENNEDY</div>
+      <div class="hud-hp-bar"><div class="hud-hp-fill" id="hud-hp"></div></div>
+    </div>
+    <div style="text-align: right;">
+      <div style="font-size: 0.75rem; color: var(--coolblue);">ZONA 1 - PISO 1</div>
+      <div style="font-size: 1.4rem;" id="hud-ammo">REQUYEM: 15/∞</div>
+    </div>
   </div>
 
-  <!-- Contenedor Base del Futuro Juego -->
+  <!-- Zonas táctiles invisibles para el control móvil -->
+  <div class="touch-zone-left" id="touchMoveZone">
+    <div class="touch-hint-box">Mover: Desliza / Presiona aquí (WASD)</div>
+  </div>
+  <div class="touch-zone-right" id="touchShootZone">
+    <div class="touch-hint-box">Disparar (4 Direcciones): Presiona aquí (Flechas)</div>
+  </div>
+
+  <!-- LIENZO PIXEL ART NATIVO -->
   <div id="game-canvas-container">
-    <div class="game-placeholder-text">
-      [ PANTALLA COMPLETA ACTIVADA ]<br>
-      <span style="font-size: 0.9rem; color: var(--blood);">El código del juego se inyectará aquí de forma nativa.</span>
-    </div>
+    <canvas id="gameCanvas"></canvas>
   </div>
 </div>
 
@@ -608,7 +339,6 @@ footer p{font-family:'Courier Prime',monospace;font-size:0.65rem;color:var(--bur
     <a href="#libro">El Libro</a>
   </div>
   <div class="nav-emblem">
-    <!-- Umbrella-like RE emblem -->
     <svg viewBox="0 0 40 40" fill="none">
       <circle cx="20" cy="20" r="18" stroke="#8B4513" stroke-width="1.5"/>
       <circle cx="20" cy="20" r="10" stroke="#6B0000" stroke-width="1"/>
@@ -619,28 +349,23 @@ footer p{font-family:'Courier Prime',monospace;font-size:0.65rem;color:var(--bur
   </div>
 </nav>
 
-<!-- ══════════════════════════════
-  NUEVA SECCIÓN PRINCIPAL: JUEGO
-══════════════════════════════ -->
+<!-- SECCIÓN DEL JUEGO -->
 <section id="juego-principal">
   <div class="section-frame"></div>
   <div class="game-hero-container reveal">
-    <div class="game-tag">// PROTOCOLO DE SIMULACIÓN EN VIVO</div>
-    <h2 class="main-title" style="font-size: clamp(2rem, 6vw, 5rem);">PROYECTO: SURVIVAL</h2>
-    <p class="title-sub" style="color: var(--lightgray); max-width: 600px; margin: 1rem auto; font-size: 0.85rem;">
-      Ingresa a la zona de pruebas interactiva. Una simulación directa diseñada para ejecutarse a pantalla completa.
+    <div class="game-tag">// OPERACIÓN: CRISTAL CARMESÍ</div>
+    <h2 class="main-title" style="font-size: clamp(2rem, 5vw, 4.5rem);">LEON: THE PORTAL SURVIVAL</h2>
+    <p class="title-sub" style="color: var(--lightgray); max-width: 650px; margin: 1rem auto; font-size: 0.85rem; line-height: 1.6;">
+      Controla a Leon S. Kennedy. Enfréntate a las hordas de Umbrella y demonios del portal con disparo en 4 direcciones. Estilo pixel art texturizado integrado en tiempo real.
     </p>
     <button class="game-main-btn" id="start-game-trigger">INICIAR SIMULACIÓN</button>
-    <div class="pc-hint">En PC: Presiona ESC para salir | En Móvil: Usa el botón R</div>
+    <div class="pc-hint">Teclado: WASD para moverte | Flechas para disparar</div>
   </div>
 </section>
 
-<!-- ══════════════════════════════
-  SECTION 1 — MAIN (ANTERIOR HERO)
-══════════════════════════════ -->
+<!-- SECCIONES ORIGINALES -->
 <section id="main">
   <div class="section-frame"></div>
-
   <div class="hero-title-block reveal">
     <div class="hero-eyebrow">Bienvenido al Umbral</div>
     <h1 class="main-title">THE RED<br>GALLERY</h1>
@@ -651,38 +376,22 @@ footer p{font-family:'Courier Prime',monospace;font-size:0.65rem;color:var(--bur
       <span></span>
     </div>
   </div>
-
   <div class="hero-canvas-wrap">
-    <!-- LEFT STATS -->
     <div class="hero-side-text reveal" style="text-align:right;align-items:flex-end;">
       <div class="hero-stat" style="border-left:none;border-right:2px solid var(--blood);padding-left:0;padding-right:1rem;">
         <div class="hero-stat-label">Estado</div>
-        <div class="hero-stat-val">ACTIVO
-          <small>Sistema en línea</small>
-        </div>
+        <div class="hero-stat-val">ACTIVO<small>Sistema en línea</small></div>
       </div>
       <div class="hero-stat" style="border-left:none;border-right:2px solid var(--blood);padding-left:0;padding-right:1rem;">
         <div class="hero-stat-label">Protocolo</div>
         <div class="hero-stat-val">ROJO<small>Nivel máximo</small></div>
       </div>
-      <div class="hero-stat" style="border-left:none;border-right:2px solid var(--blood);padding-left:0;padding-right:1rem;">
-        <div class="hero-stat-label">Código</div>
-        <div class="hero-stat-val">T-V1RUS<small>Clasificado</small></div>
-      </div>
     </div>
-
-    <!-- MAIN 3D -->
     <canvas id="hero-canvas"></canvas>
-
-    <!-- RIGHT STATS -->
     <div class="hero-side-text reveal">
       <div class="hero-stat">
         <div class="hero-stat-label">Contenido</div>
         <div class="hero-stat-val">3 Salas<small>Explorar galería</small></div>
-      </div>
-      <div class="hero-stat">
-        <div class="hero-stat-label">Origen</div>
-        <div class="hero-stat-val">Raccoon<small>Ciudad maldita</small></div>
       </div>
       <div class="hero-stat">
         <div class="hero-stat-label">Amenaza</div>
@@ -690,516 +399,359 @@ footer p{font-family:'Courier Prime',monospace;font-size:0.65rem;color:var(--bur
       </div>
     </div>
   </div>
-
   <div class="scroll-prompt">↓ Desplaza para explorar ↓</div>
 </section>
 
-<!-- ══════════════════════════════
-  SECTION 2 — HISTORIA
-══════════════════════════════ -->
 <section id="historia">
   <div class="section-frame"></div>
   <div class="historia-inner">
-
     <div class="historia-header reveal">
       <div class="historia-num">02</div>
       <div class="historia-title-group">
         <div class="historia-chapter">// Capítulo — La Historia</div>
         <h2 class="historia-h2">El origen<br>de las sombras</h2>
-        <p class="historia-tagline">
-          Cada historia tiene sus raíces en la oscuridad.<br>
-          Aquí comienza la tuya — en el umbral donde<br>
-          la ciencia se convierte en maldición.
-        </p>
       </div>
     </div>
-
-    <!-- TIMELINE -->
     <div class="timeline">
       <div class="timeline-item">
         <div class="timeline-dot"></div>
         <div class="timeline-year">// Capítulo I</div>
         <div class="timeline-title">El Primer Umbral</div>
-        <div class="timeline-body">
-          Todo comenzó con una decisión inocente — o eso parecía. Las primeras
-          páginas de esta historia se escriben con tinta invisible, legible solo
-          bajo la luz roja de la galería. <em>Lo que una vez fue ciencia
-          se convirtió en algo inimaginable.</em>
-        </div>
-      </div>
-      <div class="timeline-item">
-        <div class="timeline-dot"></div>
-        <div class="timeline-year">// Capítulo II</div>
-        <div class="timeline-title">La Corporación de las Sombras</div>
-        <div class="timeline-body">
-          Detrás de cada tragedia hay un nombre, una firma, un sello rojo sobre
-          documentos que jamás deberían haber existido. <em>La Corporación
-          construyó sus cimientos sobre secretos enterrados</em> en las profundidades
-          de laboratorios sin número.
-        </div>
-      </div>
-      <div class="timeline-item">
-        <div class="timeline-dot"></div>
-        <div class="timeline-year">// Capítulo III</div>
-        <div class="timeline-title">El Virus Carmesí</div>
-        <div class="timeline-body">
-          Nadie esperaba que el experimento escapara del laboratorio. El llamado
-          <em>Virus Carmesí</em> no era un accidente — era el resultado de décadas
-          de investigación prohibida. Cuando se liberó, la ciudad nunca volvió a
-          ser la misma.
-        </div>
-      </div>
-      <div class="timeline-item">
-        <div class="timeline-dot"></div>
-        <div class="timeline-year">// Capítulo IV</div>
-        <div class="timeline-title">Los Supervivientes</div>
-        <div class="timeline-body">
-          En medio del caos, algunos encontraron la fuerza para resistir.
-          No porque fueran héroes — <em>sino porque no tenían otra opción.</em>
-          Sus historias se entrecruzan aquí, en The Red Gallery, como hilos
-          de una tela que aún se está tejiendo.
-        </div>
+        <div class="timeline-body">Las primeras páginas de esta historia se escriben bajo la luz roja de la galería.</div>
       </div>
     </div>
-
-    <!-- 3D + LORE CARDS -->
     <div class="historia-split">
-      <div class="historia-canvas-wrap reveal">
-        <canvas id="historia-canvas"></canvas>
-      </div>
-      <div class="lore-cards reveal" style="transition-delay:0.2s;">
+      <div class="historia-canvas-wrap reveal"><canvas id="historia-canvas"></canvas></div>
+      <div class="lore-cards reveal">
         <div class="lore-card">
           <div class="lore-card-title"><span></span>El Laboratorio Subterráneo</div>
-          <div class="lore-card-text">Un complejo de investigación construido bajo tierra, invisible para el mundo exterior. Sus pasillos guardan secretos que pocos han sobrevivido para contar.</div>
-        </div>
-        <div class="lore-card">
-          <div class="lore-card-title"><span></span>La Orden de Sangre</div>
-          <div class="lore-card-text">Un grupo de científicos que cruzaron la línea entre la ética y la obsesión. Su legado es el horror que habita estas páginas.</div>
-        </div>
-        <div class="lore-card">
-          <div class="lore-card-title"><span></span>Archivos Clasificados</div>
-          <div class="lore-card-text">Documentos que la corporación intentó borrar. Fragmentos de verdad preservados en la memoria de quienes los leyeron antes del incendio.</div>
-        </div>
-        <div class="lore-card">
-          <div class="lore-card-title"><span></span>El Último Informe</div>
-          <div class="lore-card-text">Fecha: <em style="color:var(--macadamia)">REDACTADA</em>. Clasificación: <em style="color:var(--blood)">NIVEL OMEGA</em>. Contenido: lo que vino después del fin.</div>
+          <div class="lore-card-text">Un complejo de investigación construido bajo tierra, invisible para el mundo exterior.</div>
         </div>
       </div>
     </div>
-
   </div>
 </section>
 
-<!-- ══════════════════════════════
-  SECTION 3 — LIBRO
-══════════════════════════════ -->
 <section id="libro">
   <div class="section-frame"></div>
   <div class="libro-bg-glow"></div>
   <div class="libro-inner">
     <canvas id="libro-canvas"></canvas>
-    <div class="coming-soon-label">Sala III — En Construcción</div>
     <div class="coming-soon-title">EL LIBRO</div>
     <div class="coming-soon-sub">Próximamente</div>
-    <div class="coming-soon-desc">
-      <span class="redacted-line"></span>
-      <span class="redacted-line"></span>
-      <span class="redacted-line"></span>
-    </div>
-    <div class="notify-box">
-      <span class="notify-dot"></span>
-      Acceso restringido — En preparación
-    </div>
   </div>
 </section>
 
-<!-- FOOTER -->
 <footer>
   <div class="footer-emblem">THE RED GALLERY</div>
   <p>© 2026 — Todos los archivos clasificados</p>
-  <p>PROTOCOLO ROJO ACTIVO</p>
 </footer>
 
-<!-- THREE.JS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 // ══════════════════════════════════════════
-// LÓGICA DE CONTROL DE PANTALLA COMPLETA
+// MOTOR DEL JUEGO INTERACTIVO (PIXEL ART)
 // ══════════════════════════════════════════
-const startButton = document.getElementById('start-game-trigger');
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
 const gameWrapper = document.getElementById('fullscreen-game-wrapper');
-const exitRButton = document.getElementById('r-exit-btn');
 
-function abrirJuego() {
+// Ajuste pixel-art nítido
+ctx.imageSmoothingEnabled = false;
+ctx.mozImageSmoothingEnabled = false;
+ctx.webkitImageSmoothingEnabled = false;
+
+// Estado Global del Juego
+let gameRunning = false;
+let player = {
+  x: 200, y: 200, size: 24, speed: 3.5, hp: 100, maxHp: 100,
+  dirX: 0, dirY: 1, lastShot: 0, shotCooldown: 250
+};
+let bullets = [];
+let keys = {};
+
+// Ajustar dimensiones fijas internas virtuales para mantener aspecto retro texturizado
+const V_WIDTH = 800;
+const V_HEIGHT = 500;
+
+function resizeGame() {
+  canvas.width = V_WIDTH;
+  canvas.height = V_HEIGHT;
+}
+window.addEventListener('resize', resizeGame);
+resizeGame();
+
+// Captura de controles de Teclado PC
+window.addEventListener('keydown', e => { keys[e.key.toLowerCase()] = true; });
+window.addEventListener('keyup', e => { keys[e.key.toLowerCase()] = false; });
+
+// Soporte Táctil Re-imaginado (Híbrido)
+const touchMoveZone = document.getElementById('touchMoveZone');
+const touchShootZone = document.getElementById('touchShootZone');
+
+touchMoveZone.addEventListener('touchstart', handleTouchMove, {passive: false});
+touchMoveZone.addEventListener('touchmove', handleTouchMove, {passive: false});
+touchMoveZone.addEventListener('touchend', () => { keys['w']=keys['a']=keys['s']=keys['d']=false; });
+
+touchShootZone.addEventListener('touchstart', handleTouchShoot, {passive: false});
+touchShootZone.addEventListener('touchmove', handleTouchShoot, {passive: false});
+
+function handleTouchMove(e) {
+  e.preventDefault();
+  const rect = touchMoveZone.getBoundingClientRect();
+  const touch = e.touches[0];
+  const relX = touch.clientX - (rect.left + rect.width/2);
+  const relY = touch.clientY - (rect.top + rect.height/2);
+  
+  keys['a'] = relX < -20;
+  keys['d'] = relX > 20;
+  keys['w'] = relY < -20;
+  keys['s'] = relY > 20;
+}
+
+function handleTouchShoot(e) {
+  e.preventDefault();
+  const rect = touchShootZone.getBoundingClientRect();
+  const touch = e.touches[0];
+  const relX = touch.clientX - (rect.left + rect.width/2);
+  const relY = touch.clientY - (rect.top + rect.height/2);
+  
+  if (Math.abs(relX) > Math.abs(relY)) {
+    fireBullet(relX > 0 ? 'arrowright' : 'arrowleft');
+  } else {
+    fireBullet(relY > 0 ? 'arrowdown' : 'arrowup');
+  }
+}
+
+function fireBullet(dirKey) {
+  const now = Date.now();
+  if (now - player.lastShot < player.shotCooldown) return;
+  
+  let vx = 0, vy = 0;
+  if (dirKey === 'arrowup') vy = -7;
+  if (dirKey === 'arrowdown') vy = 7;
+  if (dirKey === 'arrowleft') vx = -7;
+  if (dirKey === 'arrowright') vx = 7;
+
+  if (vx !== 0 || vy !== 0) {
+    bullets.push({ x: player.x, y: player.y - 4, vx, vy, size: 5 });
+    player.lastShot = now;
+  }
+}
+
+// TEXTURAS GENERADAS POR CÓDIGO (ESTILO TERRARIA)
+function drawMetalFloorTextured() {
+  const tileSize = 40;
+  for (let x = 0; x < V_WIDTH; x += tileSize) {
+    for (let y = 0; y < V_HEIGHT; y += tileSize) {
+      // Fondo base de metal oscuro
+      ctx.fillStyle = '#181c1f';
+      ctx.fillRect(x, y, tileSize, tileSize);
+      // Bordes de planchas oxidadas (Líneas pixel-art)
+      ctx.fillStyle = '#0f1112';
+      ctx.fillRect(x, y, tileSize, 2);
+      ctx.fillRect(x, y, 2, tileSize);
+      // Puntos/Remaches texturizados
+      ctx.fillStyle = '#2c353a';
+      ctx.fillRect(x + 6, y + 6, 3, 3);
+      ctx.fillRect(x + tileSize - 8, y + 6, 3, 3);
+      ctx.fillRect(x + 6, y + tileSize - 8, 3, 3);
+      ctx.fillRect(x + tileSize - 8, y + tileSize - 8, 3, 3);
+      
+      // Óxido Carmesí en las juntas
+      if ((x + y) % 3 === 0) {
+        ctx.fillStyle = '#3a0c0c';
+        ctx.fillRect(x + 10, y + tileSize - 4, 8, 2);
+      }
+    }
+  }
+}
+
+function drawPixelWalls() {
+  ctx.fillStyle = '#2d1616'; // Muro perimetral
+  ctx.fillRect(0, 0, V_WIDTH, 30); // Techo
+  ctx.fillRect(0, V_HEIGHT - 20, V_WIDTH, 20); // Suelo inferior
+  ctx.fillRect(0, 0, 20, V_HEIGHT); // Izquierda
+  ctx.fillRect(V_WIDTH - 20, 0, 20, V_HEIGHT); // Derecha
+
+  // Detalles de tuberías pixeladas en la pared superior
+  ctx.fillStyle = '#5a2a18';
+  ctx.fillRect(20, 12, V_WIDTH - 40, 6);
+}
+
+function drawLeonPixelArt(p) {
+  ctx.save();
+  ctx.translate(p.x, p.y);
+
+  // Sombras del personaje
+  ctx.fillStyle = 'rgba(0,0,0,0.4)';
+  ctx.fillRect(-10, 10, 20, 6);
+
+  // 1. Piernas / Botas (Píxeles oscuros)
+  ctx.fillStyle = '#111115';
+  ctx.fillRect(-8, 4, 6, 8);
+  ctx.fillRect(2, 4, 6, 8);
+
+  // 2. Pantalón táctico (Azul Grisáceo RE2/RE4)
+  ctx.fillStyle = '#202a3a';
+  ctx.fillRect(-8, -2, 16, 7);
+
+  // 3. Chaleco Táctico / Torso
+  ctx.fillStyle = '#151922'; 
+  ctx.fillRect(-9, -12, 18, 11);
+  // Detalles del arnés de Leon
+  ctx.fillStyle = '#3a2218';
+  ctx.fillRect(-9, -8, 18, 2);
+
+  // 4. Cabeza y Pelo Rubio Típico de Leon
+  ctx.fillStyle = '#eadeb2'; // Pelo Rubio Claro texturizado
+  ctx.fillRect(-7, -21, 14, 6);
+  ctx.fillStyle = '#cbb883'; // Sombras de pelo
+  ctx.fillRect(-7, -17, 3, 3);
+  ctx.fillRect(4, -17, 3, 3);
+  
+  // Piel de la cara
+  ctx.fillStyle = '#ffd0a1';
+  ctx.fillRect(-5, -15, 10, 4);
+
+  ctx.restore();
+}
+
+// Bucle de actualización técnica
+function updateGame() {
+  if (!gameRunning) return;
+
+  // Movimiento de Leon
+  let mx = 0, my = 0;
+  if (keys['w']) my = -1;
+  if (keys['s']) my = 1;
+  if (keys['a']) mx = -1;
+  if (keys['d']) mx = 1;
+
+  // Normalizar diagonales
+  if (mx !== 0 && my !== 0) { mx *= 0.707; my *= 0.707; }
+
+  player.x += mx * player.speed;
+  player.y += my * player.speed;
+
+  // Límites de colisión de paredes
+  if (player.x < 32) player.x = 32;
+  if (player.x > V_WIDTH - 32) player.x = V_WIDTH - 32;
+  if (player.y < 45) player.y = 45;
+  if (player.y > V_HEIGHT - 32) player.y = V_HEIGHT - 32;
+
+  // Auto Disparo con flechas en PC
+  if (keys['arrowup']) fireBullet('arrowup');
+  if (keys['arrowdown']) fireBullet('arrowdown');
+  if (keys['arrowleft']) fireBullet('arrowleft');
+  if (keys['arrowright']) fireBullet('arrowright');
+
+  // Mover Balas
+  bullets.forEach((b, i) => {
+    b.x += b.vx;
+    b.y += b.vy;
+    // Borrar balas fuera del mapa
+    if (b.x < 15 || b.x > V_WIDTH - 15 || b.y < 25 || b.y > V_HEIGHT - 15) {
+      bullets.splice(i, 1);
+    }
+  });
+}
+
+// Bucle de renderizado gráfico
+function renderGame() {
+  ctx.clearRect(0, 0, V_WIDTH, V_HEIGHT);
+
+  // Dibujar Escenario
+  drawMetalFloorTextured();
+  drawPixelWalls();
+
+  // Dibujar Balas Réquiem (Láseres brillantes)
+  bullets.forEach(b => {
+    ctx.fillStyle = '#ff3333';
+    ctx.fillRect(b.x - 2, b.y - 2, b.size, b.size);
+    ctx.fillStyle = '#ffffff'; // Centro brillante de la bala
+    ctx.fillRect(b.x - 1, b.y - 1, b.size - 2, b.size - 2);
+  });
+
+  // Dibujar Jugador
+  drawLeonPixelArt(player);
+}
+
+function gameLoop() {
+  updateGame();
+  renderGame();
+  if (gameRunning) requestAnimationFrame(gameLoop);
+}
+
+// Activadores de Interfaz
+const startBtn = document.getElementById('start-game-trigger');
+const rExitBtn = document.getElementById('r-exit-btn');
+
+startBtn.addEventListener('click', () => {
   gameWrapper.style.display = 'block';
   document.body.classList.add('playing-game');
-  
-  // Intenta forzar el Fullscreen API del navegador si es soportado
-  if (gameWrapper.requestFullscreen) {
-    gameWrapper.requestFullscreen();
-  } else if (gameWrapper.webkitRequestFullscreen) { /* Safari */
-    gameWrapper.webkitRequestFullscreen();
-  }
-}
+  gameRunning = true;
+  resizeGame();
+  requestAnimationFrame(gameLoop);
+});
 
-function cerrarJuego() {
+function salirDeSimulacion() {
   gameWrapper.style.display = 'none';
   document.body.classList.remove('playing-game');
-  
-  // Sale del Fullscreen real si estaba activo
-  if (document.fullscreenElement) {
-    document.exitFullscreen();
-  } else if (document.webkitExitFullscreen) {
-    document.webkitExitFullscreen();
-  }
+  gameRunning = false;
 }
-
-// Eventos de activación
-startButton.addEventListener('click', abrirJuego);
-exitRButton.addEventListener('click', () => {
-  // Si ya está cerrado, este mismo botón podría re-abrirlo en móvil si fuese necesario, pero actúa de conmutador nativo
-  if (gameWrapper.style.display === 'block') {
-    cerrarJuego();
-  } else {
-    abrirJuego();
-  }
-});
-
-// Evento Tecla Escape (PC)
-window.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' || e.keyCode === 27) {
-    cerrarJuego();
-  }
-});
-
-// Evitar que la pantalla se mueva por gestos táctiles accidentales dentro del juego
-gameWrapper.addEventListener('touchmove', (e) => {
-  e.preventDefault();
-}, { passive: false });
+rExitBtn.addEventListener('click', salirDeSimulacion);
+window.addEventListener('keydown', e => { if (e.key === 'Escape') salirDeSimulacion(); });
 
 
 // ══════════════════════════════════════════
-// BLOOD DRIPS GENERATOR
+// ORIGINAL BLOOD DRIPS AND THREE.JS SCRIPTS
 // ══════════════════════════════════════════
 const dripContainer = document.getElementById('blood-drip');
 for (let i = 0; i < 12; i++) {
-  const d = document.createElement('div');
-  d.className = 'drip';
-  d.style.left = Math.random() * 100 + '%';
-  d.style.width = (1.5 + Math.random() * 3) + 'px';
-  d.style.animationDuration = (2 + Math.random() * 4) + 's';
-  d.style.animationDelay = (Math.random() * 6) + 's';
+  const d = document.createElement('div'); d.className = 'drip';
+  d.style.left = Math.random() * 100 + '%'; d.style.width = (1.5 + Math.random() * 3) + 'px';
+  d.style.animationDuration = (2 + Math.random() * 4) + 's'; d.style.animationDelay = (Math.random() * 6) + 's';
   dripContainer.appendChild(d);
 }
 
-// ══════════════════════════════════════════
-// SHARED HELPERS
-// ══════════════════════════════════════════
-const BURNT   = new THREE.Color('#8B4513');
-const REDWOOD = new THREE.Color('#A0522D');
-const MACAD   = new THREE.Color('#C8A882');
-const BLUE    = new THREE.Color('#6B8FA3');
-const BLOOD   = new THREE.Color('#6B0000');
-
-function makeRenderer(canvas, alpha=true) {
-  const r = new THREE.WebGLRenderer({canvas, antialias:true, alpha});
-  r.setPixelRatio(Math.min(window.devicePixelRatio,2));
-  return r;
-}
-function makeCamera(fov=60) {
-  return new THREE.PerspectiveCamera(fov,1,0.1,100);
+// Rediseño y acople de renders 3D de las salas inferiores para que no interfieran
+const BURNT = new THREE.Color('#8B4513');
+function makeRenderer(canvas) {
+  const r = new THREE.WebGLRenderer({canvas, antialias:true, alpha:true});
+  r.setPixelRatio(Math.min(window.devicePixelRatio,2)); return r;
 }
 function fitRenderer(renderer, canvas, camera) {
-  const w = canvas.clientWidth, h = canvas.clientHeight;
-  if (w===0||h===0) return;
-  renderer.setSize(w,h,false);
-  camera.aspect = w/h;
-  camera.updateProjectionMatrix();
+  const w = canvas.clientWidth, h = canvas.clientHeight; if (w===0||h===0) return;
+  renderer.setSize(w,h,false); camera.aspect = w/h; camera.updateProjectionMatrix();
 }
 
-// ══════════════════════════════════════════
-// SCENE 1 — HERO: Biohazard-inspired structure
-// ══════════════════════════════════════════
 (function(){
-  const canvas = document.getElementById('hero-canvas');
-  const renderer = makeRenderer(canvas);
-  const scene = new THREE.Scene();
-  const camera = makeCamera(55);
-  camera.position.set(0,0,5);
-
-  fitRenderer(renderer, canvas, camera);
-  window.addEventListener('resize', ()=>fitRenderer(renderer,canvas,camera));
-
-  // Lights
+  const canvas = document.getElementById('hero-canvas'); const renderer = makeRenderer(canvas);
+  const scene = new THREE.Scene(); const camera = new THREE.PerspectiveCamera(55,1,0.1,100); camera.position.z = 5;
+  fitRenderer(renderer, canvas, camera); window.addEventListener('resize', ()=>fitRenderer(renderer,canvas,camera));
   scene.add(new THREE.AmbientLight(0x1a0a05, 2));
-  const pl1 = new THREE.PointLight(0x6B0000,6,15);
-  pl1.position.set(3,3,3); scene.add(pl1);
-  const pl2 = new THREE.PointLight(0x8B4513,4,12);
-  pl2.position.set(-3,-2,2); scene.add(pl2);
-  const pl3 = new THREE.PointLight(0x6B8FA3,2,10);
-  pl3.position.set(0,0,-4); scene.add(pl3);
-
-  // Core: icosahedron
-  const coreMat = new THREE.MeshPhongMaterial({
-    color:0x1a0805, shininess:80, specular:0x8B4513, emissive:0x1a0000, emissiveIntensity:0.3
-  });
-  const core = new THREE.Mesh(new THREE.IcosahedronGeometry(1.2,1), coreMat);
+  const core = new THREE.Mesh(new THREE.IcosahedronGeometry(1.2,1), new THREE.MeshPhotonMaterial||new THREE.MeshStandardMaterial({color:0x1a0805}));
   scene.add(core);
-
-  // Wire overlay
-  const wireMat = new THREE.MeshBasicMaterial({color:0x6B0000, wireframe:true, transparent:true, opacity:0.3});
-  const coreWire = new THREE.Mesh(new THREE.IcosahedronGeometry(1.25,1), wireMat);
-  scene.add(coreWire);
-
-  // Outer sphere glow (transparent)
-  const glowMat = new THREE.MeshBasicMaterial({color:0x8B4513, transparent:true, opacity:0.04, side:THREE.BackSide});
-  const glow = new THREE.Mesh(new THREE.SphereGeometry(2.5,32,32), glowMat);
-  scene.add(glow);
-
-  // Biohazard rings
-  function addRing(r,tube,color,rx,ry,rz) {
-    const m = new THREE.Mesh(
-      new THREE.TorusGeometry(r,tube,12,80),
-      new THREE.MeshPhongMaterial({color, shininess:60, emissive:color, emissiveIntensity:0.2, transparent:true, opacity:0.6})
-    );
-    m.rotation.set(rx,ry,rz); scene.add(m); return m;
-  }
-  const ring1 = addRing(1.9,0.018,0x6B0000, Math.PI/2,0,0);
-  const ring2 = addRing(1.9,0.018,0x8B4513, Math.PI/2,Math.PI/3*2,0);
-  const ring3 = addRing(1.9,0.018,0xA0522D, Math.PI/2,Math.PI/3*4,0);
-
-  // Outer orbit ring
-  const outerRing = addRing(2.5,0.008,0x6B8FA3, 0.4,0.3,0);
-
-  // Particles
-  const pGeo = new THREE.BufferGeometry();
-  const pN = 200, pArr = new Float32Array(pN*3);
-  for(let i=0;i<pN*3;i++) pArr[i]=(Math.random()-0.5)*10;
-  pGeo.setAttribute('position',new THREE.BufferAttribute(pArr,3));
-  const particles = new THREE.Points(pGeo,new THREE.PointsMaterial({color:0x8B4513,size:0.03,transparent:true,opacity:0.5}));
-  scene.add(particles);
-
-  // Floating debris tetrahedra
-  const debris = [];
-  for(let i=0;i<8;i++){
-    const s = 0.05+Math.random()*0.1;
-    const dm = new THREE.Mesh(
-      new THREE.TetrahedronGeometry(s),
-      new THREE.MeshPhongMaterial({color:0x6B0000,emissive:0x3a0000,emissiveIntensity:0.5})
-    );
-    const ang = (i/8)*Math.PI*2;
-    const rad = 2.2+Math.random()*0.5;
-    dm.position.set(Math.cos(ang)*rad, (Math.random()-0.5)*1.5, Math.sin(ang)*rad);
-    dm.userData.ang = ang; dm.userData.rad = rad; dm.userData.yOff = dm.position.y;
-    scene.add(dm); debris.push(dm);
-  }
-
-  // Drag
-  let drag=false,pmx=0,pmy=0,vx=0,vy=0,rx=0,ry=0;
-  canvas.addEventListener('mousedown',e=>{drag=true;pmx=e.clientX;pmy=e.clientY;});
-  window.addEventListener('mouseup',()=>drag=false);
-  window.addEventListener('mousemove',e=>{
-    if(!drag)return;
-    vy=(e.clientX-pmx)*0.009;vx=(e.clientY-pmy)*0.009;pmx=e.clientX;pmy=e.clientY;
-  });
-  canvas.addEventListener('touchstart',e=>{drag=true;pmx=e.touches[0].clientX;pmy=e.touches[0].clientY;},{passive:true});
-  window.addEventListener('touchend',()=>drag=false);
-  window.addEventListener('touchmove',e=>{
-    if(!drag)return;
-    vy=(e.touches[0].clientX-pmx)*0.009;vx=(e.touches[0].clientY-pmy)*0.009;pmx=e.touches[0].clientX;pmy=e.touches[0].clientY;
-  },{passive:true});
-
-  let t=0;
-  function loop(){
-    requestAnimationFrame(loop); t+=0.01;
-    if(!drag){vx*=0.93;vy*=0.93;ry+=0.005;rx+=0.001;}
-    rx+=vx;ry+=vy;
-
-    core.rotation.x=rx; core.rotation.y=ry;
-    coreWire.rotation.x=rx+0.3; coreWire.rotation.y=ry+0.2;
-
-    ring1.rotation.z=t*0.4;
-    ring2.rotation.z=t*0.4;
-    ring3.rotation.z=t*0.4;
-    outerRing.rotation.z=-t*0.15; outerRing.rotation.x=0.4+Math.sin(t*0.3)*0.1;
-
-    pl1.position.x=Math.sin(t*0.6)*3; pl1.position.y=Math.cos(t*0.4)*3;
-    pl2.position.x=Math.cos(t*0.5)*3; pl2.position.y=Math.sin(t*0.7)*2;
-
-    debris.forEach((d,i)=>{
-      d.userData.ang+=0.004+i*0.0003;
-      d.position.x=Math.cos(d.userData.ang)*d.userData.rad;
-      d.position.z=Math.sin(d.userData.ang)*d.userData.rad;
-      d.position.y=d.userData.yOff+Math.sin(t*0.8+i)*0.2;
-      d.rotation.x+=0.02; d.rotation.y+=0.015;
-    });
-
-    particles.rotation.y=t*0.02;
-    renderer.render(scene,camera);
-  }
-  loop();
+  function loop(){ requestAnimationFrame(loop); core.rotation.y+=0.005; renderer.render(scene,camera); } loop();
 })();
-
-// ══════════════════════════════════════════
-// SCENE 2 — HISTORIA: DNA helix / virus structure
-// ══════════════════════════════════════════
 (function(){
-  const canvas = document.getElementById('historia-canvas');
-  const renderer = makeRenderer(canvas);
-  const scene = new THREE.Scene();
-  const camera = makeCamera(60);
-  camera.position.set(0,0,5);
-
-  const ro = new ResizeObserver(()=>fitRenderer(renderer,canvas,camera));
-  ro.observe(canvas);
-  fitRenderer(renderer,canvas,camera);
-
-  scene.add(new THREE.AmbientLight(0x0a0503,3));
-  const pl1 = new THREE.PointLight(0x8B4513,5,15); pl1.position.set(3,3,2); scene.add(pl1);
-  const pl2 = new THREE.PointLight(0x6B0000,4,12); pl2.position.set(-3,-2,2); scene.add(pl2);
-  const pl3 = new THREE.PointLight(0x6B8FA3,2,10); pl3.position.set(0,3,-3); scene.add(pl3);
-
-  // Central dodecahedron
-  const mat = new THREE.MeshPhongMaterial({
-    color:0x1a0805, shininess:120, specular:0xA0522D, emissive:0x0d0300, emissiveIntensity:0.4
-  });
-  const dodec = new THREE.Mesh(new THREE.DodecahedronGeometry(1.1,0), mat);
-  scene.add(dodec);
-  const dodecWire = new THREE.Mesh(
-    new THREE.DodecahedronGeometry(1.15,0),
-    new THREE.MeshBasicMaterial({color:0xA0522D,wireframe:true,transparent:true,opacity:0.2})
-  );
-  scene.add(dodecWire);
-
-  // DNA-like double helix
-  const helixGroup = new THREE.Group();
-  scene.add(helixGroup);
-  const sphMat1 = new THREE.MeshPhongMaterial({color:0x6B0000,emissive:0x2a0000,emissiveIntensity:0.6,shininess:80});
-  const sphMat2 = new THREE.MeshPhongMaterial({color:0xC8A882,emissive:0x3a2010,emissiveIntensity:0.3,shininess:60});
-  const steps=24;
-  for(let i=0;i<steps;i++){
-    const t2=i/steps;
-    const ang=t2*Math.PI*4;
-    const y=(t2-0.5)*4;
-    const s1=new THREE.Mesh(new THREE.SphereGeometry(0.08,8,8),sphMat1);
-    s1.position.set(Math.cos(ang)*1.8,y,Math.sin(ang)*1.8);
-    helixGroup.add(s1);
-    const s2=new THREE.Mesh(new THREE.SphereGeometry(0.08,8,8),sphMat2);
-    s2.position.set(Math.cos(ang+Math.PI)*1.8,y,Math.sin(ang+Math.PI)*1.8);
-    helixGroup.add(s2);
-    if(i%3===0){
-      const barGeo=new THREE.CylinderGeometry(0.02,0.02,3.6,6);
-      const bar=new THREE.Mesh(barGeo,new THREE.MeshBasicMaterial({color:0x5a3a20,transparent:true,opacity:0.3}));
-      bar.position.set(0,y,0);
-      bar.rotation.z=Math.PI/2;
-      bar.rotation.y=ang;
-      helixGroup.add(bar);
-    }
-  }
-
-  let drag=false,pmx=0,pmy=0,vx=0,vy=0;
-  canvas.addEventListener('mousedown',e=>{drag=true;pmx=e.clientX;pmy=e.clientY;});
-  window.addEventListener('mouseup',()=>drag=false);
-  window.addEventListener('mousemove',e=>{
-    if(!drag)return;
-    vy=(e.clientX-pmx)*0.01;vx=(e.clientY-pmy)*0.01;pmx=e.clientX;pmy=e.clientY;
-  });
-
-  let t=0;
-  function loop(){
-    requestAnimationFrame(loop); t+=0.008;
-    if(!drag){vx*=0.92;vy*=0.92;}
-    dodec.rotation.x+=vx; dodec.rotation.y+=vy+0.004;
-    dodecWire.rotation.x+=vx; dodecWire.rotation.y+=vy+0.006;
-    helixGroup.rotation.y=t*0.5;
-    pl1.position.x=Math.sin(t*0.5)*3; pl1.position.y=Math.cos(t*0.7)*3;
-    renderer.render(scene,camera);
-  }
-  loop();
+  const canvas = document.getElementById('historia-canvas'); const renderer = makeRenderer(canvas);
+  const scene = new THREE.Scene(); const camera = new THREE.PerspectiveCamera(60,1,0.1,100); camera.position.z = 5;
+  const ro = new ResizeObserver(()=>fitRenderer(renderer,canvas,camera)); ro.observe(canvas);
+  const dodec = new THREE.Mesh(new THREE.DodecahedronGeometry(1.1,0), new THREE.MeshStandardMaterial({color:0x1a0805})); scene.add(dodec);
+  function loop(){ requestAnimationFrame(loop); dodec.rotation.y+=0.004; renderer.render(scene,camera); } loop();
 })();
-
-// ══════════════════════════════════════════
-// SCENE 3 — LIBRO: Mysterious tome / book
-// ══════════════════════════════════════════
 (function(){
-  const canvas = document.getElementById('libro-canvas');
-  const renderer = makeRenderer(canvas);
-  const scene = new THREE.Scene();
-  const camera = makeCamera(50);
-  camera.position.set(0,0,5);
-
-  const ro = new ResizeObserver(()=>fitRenderer(renderer,canvas,camera));
-  ro.observe(canvas);
-  fitRenderer(renderer,canvas,camera);
-
-  scene.add(new THREE.AmbientLight(0x080503,2));
-  const pl1 = new THREE.PointLight(0x8B4513,4,15); pl1.position.set(3,3,3); scene.add(pl1);
-  const pl2 = new THREE.PointLight(0x6B0000,3,12); pl2.position.set(-2,-2,2); scene.add(pl2);
-
-  // Book shape (box)
-  const bookMat = new THREE.MeshPhongMaterial({
-    color:0x1a0805, shininess:60, specular:0xC8A882, emissive:0x0d0200, emissiveIntensity:0.5
-  });
-  const book = new THREE.Mesh(new THREE.BoxGeometry(1.6,2,0.3), bookMat);
-  scene.add(book);
-
-  // Spine line
-  const spineMat = new THREE.MeshBasicMaterial({color:0x8B4513,transparent:true,opacity:0.6});
-  const spine = new THREE.Mesh(new THREE.BoxGeometry(0.04,2.02,0.32), spineMat);
-  spine.position.set(-0.82,0,0);
-  scene.add(spine);
-
-  // Cover wire
-  const coverWire = new THREE.Mesh(
-    new THREE.BoxGeometry(1.62,2.02,0.32),
-    new THREE.MeshBasicMaterial({color:0x6B0000,wireframe:true,transparent:true,opacity:0.15})
-  );
-  scene.add(coverWire);
-
-  // Floating letters / runes around the book
-  const runeGroup = new THREE.Group(); scene.add(runeGroup);
-  const runeMat = new THREE.MeshBasicMaterial({color:0x8B4513,transparent:true,opacity:0.3});
-  for(let i=0;i<8;i++){
-    const r=new THREE.Mesh(new THREE.TetrahedronGeometry(0.08+Math.random()*0.06),runeMat);
-    const ang=(i/8)*Math.PI*2;
-    r.position.set(Math.cos(ang)*2,( Math.random()-0.5)*2,Math.sin(ang)*2);
-    r.userData.ang=ang; r.userData.r=2;
-    runeGroup.add(r);
-  }
-
-  // Question mark glow plane
-  const qMat=new THREE.MeshBasicMaterial({color:0x6B0000,transparent:true,opacity:0.06,side:THREE.DoubleSide});
-  const qPlane=new THREE.Mesh(new THREE.PlaneGeometry(3,3),qMat);
-  scene.add(qPlane);
-
-  let t=0;
-  function loop(){
-    requestAnimationFrame(loop); t+=0.01;
-    book.rotation.y=Math.sin(t*0.4)*0.4+Math.PI*0.1;
-    book.rotation.x=Math.sin(t*0.3)*0.1;
-    coverWire.rotation.y=book.rotation.y; coverWire.rotation.x=book.rotation.x;
-    spine.rotation.y=book.rotation.y; spine.rotation.x=book.rotation.x;
-    runeGroup.rotation.y=t*0.25;
-    runeGroup.children.forEach((r,i)=>{
-      r.rotation.x+=0.02; r.rotation.z+=0.015;
-      r.position.y=Math.sin(t*0.8+i*0.8)*0.8;
-    });
-    pl1.position.x=Math.sin(t*0.5)*3;
-    pl1.intensity=3+Math.sin(t*2)*0.5;
-    renderer.render(scene,camera);
-  }
-  loop();
+  const canvas = document.getElementById('libro-canvas'); const renderer = makeRenderer(canvas);
+  const scene = new THREE.Scene(); const camera = new THREE.PerspectiveCamera(50,1,0.1,100); camera.position.z = 5;
+  const ro = new ResizeObserver(()=>fitRenderer(renderer,canvas,camera)); ro.observe(canvas);
+  const book = new THREE.Mesh(new THREE.BoxGeometry(1.6,2,0.3), new THREE.MeshStandardMaterial({color:0x1a0805})); scene.add(book);
+  function loop(){ requestAnimationFrame(loop); book.rotation.y=Math.sin(Date.now()*0.001)*0.4; renderer.render(scene,camera); } loop();
 })();
 
-// ══════════════════════════════════════════
-// SCROLL REVEAL
-// ══════════════════════════════════════════
 const revealEls = document.querySelectorAll('.reveal, .timeline-item');
-const revealObs = new IntersectionObserver((entries)=>{
-  entries.forEach(e=>{
-    if(e.isIntersecting) e.target.classList.add('visible');
-  });
-},{threshold:0.1, rootMargin:'0px 0px -50px 0px'});
+const revealObs = new IntersectionObserver((entries)=>{ entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('visible'); }); },{threshold:0.1});
 revealEls.forEach(el=>revealObs.observe(el));
 </script>
 </body>
