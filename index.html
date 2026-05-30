@@ -4,24 +4,38 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
 <title>THE RED GALLERY</title>
-<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Oswald:wght@300;400;700&family=Press+Start+2P&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Oswald:wght@300;400;700&display=swap" rel="stylesheet"/>
 <style>
 :root {
-  --burnt:    #8B4513;--redwood:  #A0522D;--macadamia:#C8A882;
-  --coolblue: #6B8FA3;--lightgray:#C9C9C0;--black:    #0A0705;
-  --darkbg:   #0F0A08;--paper:    #1A1208;--blood:    #6B0000;
-  --rust:     #7A3B1E;--floor:    #1a1208;--wall:     #0d0905;
-  --room-border: #3a2010;
+  --burnt:    #8B4513;
+  --redwood:  #A0522D;
+  --macadamia:#C8A882;
+  --coolblue: #6B8FA3;
+  --lightgray:#C9C9C0;
+  --black:    #0A0705;
+  --darkbg:   #0F0A08;
+  --paper:    #1A1208;
+  --blood:    #6B0000;
+  --rust:     #7A3B1E;
 }
 
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{
-  background:var(--darkbg);color:var(--lightgray);
-  font-family:'Courier Prime',monospace;overflow-x:hidden;
+  background:var(--darkbg);
+  color:var(--lightgray);
+  font-family:'Courier Prime',monospace;
+  overflow-x:hidden;
   cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Ccircle cx='10' cy='10' r='4' fill='%238B4513'/%3E%3Ccircle cx='10' cy='10' r='8' fill='none' stroke='%23A0522D' stroke-width='1'/%3E%3C/svg%3E") 10 10, crosshair;
 }
 
+/* Bloqueo de scroll dinámico al jugar */
+body.playing-game {
+  overflow: hidden !important;
+  touch-action: none;
+}
+
+/* ── BLOOD DRIP BACKGROUND ── */
 body::before{
   content:'';position:fixed;inset:0;z-index:0;
   background:
@@ -30,6 +44,8 @@ body::before{
     radial-gradient(ellipse 80% 80% at 50% 50%, rgba(15,10,8,1) 0%, transparent 100%);
   pointer-events:none;
 }
+
+/* ── GRAIN ── */
 body::after{
   content:'';position:fixed;inset:0;z-index:1;
   background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.06'/%3E%3C/svg%3E");
@@ -37,199 +53,313 @@ body::after{
 }
 
 /* ── BLOOD DRIP TOP ── */
-.blood-drip{position:fixed;top:0;left:0;right:0;z-index:200;height:80px;pointer-events:none;overflow:hidden;}
+.blood-drip{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  height:80px;pointer-events:none;overflow:hidden;
+}
 .drip{
   position:absolute;top:0;width:3px;background:linear-gradient(to bottom,var(--blood),transparent);
   border-radius:0 0 50% 50%;animation:drip linear infinite;opacity:0.7;
 }
 @keyframes drip{
-  0%{height:0;opacity:0.8}80%{height:60px;opacity:0.6}100%{height:80px;opacity:0}
+  0%{height:0;opacity:0.8}
+  80%{height:60px;opacity:0.6}
+  100%{height:80px;opacity:0}
 }
 
-/* ── NAVIGATION ── */
+/* ══════════════════════════════════
+   NAVIGATION
+══════════════════════════════════ */
 nav{
   position:fixed;top:0;left:0;right:0;z-index:300;
-  display:flex;align-items:center;justify-content:space-between;padding:1rem 3rem;
-  border-bottom:1px solid rgba(139,69,19,0.3);backdrop-filter:blur(12px);background:rgba(10,7,5,0.85);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1rem 3rem;
+  border-bottom:1px solid rgba(139,69,19,0.3);
+  backdrop-filter:blur(12px);
+  background:rgba(10,7,5,0.85);
 }
 .nav-logo{
-  font-family:'Special Elite',cursive;font-size:1.4rem;letter-spacing:0.25em;color:var(--macadamia);
-  text-shadow:0 0 20px rgba(139,69,19,0.8);position:relative;
+  font-family:'Special Elite',cursive;
+  font-size:1.4rem;letter-spacing:0.25em;
+  color:var(--macadamia);
+  text-shadow:0 0 20px rgba(139,69,19,0.8);
+  position:relative;
 }
-.nav-logo::after{content:'';position:absolute;bottom:-4px;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,var(--burnt),transparent);}
+.nav-logo::after{
+  content:'';position:absolute;bottom:-4px;left:0;right:0;height:1px;
+  background:linear-gradient(to right,transparent,var(--burnt),transparent);
+}
 .nav-links{display:flex;gap:2.5rem;align-items:center;}
 .nav-links a{
   font-family:'Oswald',sans-serif;font-size:0.75rem;letter-spacing:0.2em;
   text-transform:uppercase;color:var(--lightgray);text-decoration:none;
   transition:color 0.3s,text-shadow 0.3s;position:relative;padding-bottom:4px;
 }
-.nav-links a::after{content:'';position:absolute;bottom:0;left:0;width:0;height:1px;background:var(--blood);transition:width 0.3s;}
+.nav-links a::after{
+  content:'';position:absolute;bottom:0;left:0;width:0;height:1px;
+  background:var(--blood);transition:width 0.3s;
+}
 .nav-links a:hover{color:var(--macadamia);text-shadow:0 0 10px rgba(160,82,45,0.6);}
 .nav-links a:hover::after{width:100%;}
-.nav-emblem{width:40px;height:40px;position:relative;display:flex;align-items:center;justify-content:center;}
+.nav-emblem{
+  width:40px;height:40px;position:relative;
+  display:flex;align-items:center;justify-content:center;
+}
 .nav-emblem svg{width:100%;height:100%;}
 
-section{position:relative;z-index:2;min-height:100vh;overflow:hidden;}
-.section-frame{position:absolute;inset:20px;pointer-events:none;z-index:5;border:1px solid rgba(139,69,19,0.2);}
-.section-frame::before,.section-frame::after{content:'';position:absolute;width:30px;height:30px;border-color:var(--burnt);border-style:solid;}
+/* ══════════════════════════════════
+   SECTION BASE
+══════════════════════════════════ */
+section{
+  position:relative;z-index:2;
+  min-height:100vh;overflow:hidden;
+}
+
+/* ── DECORATIVE BORDER ── */
+.section-frame{
+  position:absolute;inset:20px;pointer-events:none;z-index:5;
+  border:1px solid rgba(139,69,19,0.2);
+}
+.section-frame::before,.section-frame::after{
+  content:'';position:absolute;width:30px;height:30px;
+  border-color:var(--burnt);border-style:solid;
+}
 .section-frame::before{top:-1px;left:-1px;border-width:2px 0 0 2px;}
 .section-frame::after{bottom:-1px;right:-1px;border-width:0 2px 2px 0;}
 
-/* ── SECTION 1 — HERO ── */
-#main{background:radial-gradient(ellipse at center, #1a0f0a 0%, var(--darkbg) 70%);display:grid;grid-template-rows:auto 1fr;padding-top:80px;}
-.hero-title-block{text-align:center;padding:3rem 2rem 1rem;position:relative;}
-.hero-eyebrow{
-  font-family:'Oswald',sans-serif;font-size:0.7rem;letter-spacing:0.4em;text-transform:uppercase;color:var(--coolblue);
-  margin-bottom:1rem;display:flex;align-items:center;justify-content:center;gap:1rem;
-}
-.hero-eyebrow::before,.hero-eyebrow::after{content:'';display:block;width:40px;height:1px;background:var(--coolblue);opacity:0.5;}
-.main-title{
-  font-family:'Special Elite',cursive;font-size:clamp(3rem,8vw,8rem);line-height:0.9;letter-spacing:0.05em;color:var(--macadamia);
-  text-shadow:0 0 30px rgba(139,69,19,0.6),0 0 80px rgba(107,0,0,0.3),3px 3px 0 rgba(107,0,0,0.4);animation:titleFlicker 8s infinite;margin-bottom:0.5rem;
-}
-@keyframes titleFlicker{0%,95%,100%{opacity:1;}96%{opacity:0.85;}97%{opacity:1;}98%{opacity:0.9;}99%{opacity:1;}}
-.title-sub{font-family:'Oswald',sans-serif;font-size:0.9rem;letter-spacing:0.5em;text-transform:uppercase;color:var(--burnt);margin-bottom:0.5rem;}
-.title-divider{display:flex;align-items:center;justify-content:center;gap:1rem;margin:1.5rem auto;max-width:500px;}
-.title-divider span{height:1px;flex:1;background:linear-gradient(to right,transparent,var(--burnt),transparent);}
-.title-divider svg{width:20px;height:20px;fill:var(--blood);}
-
-.hero-canvas-wrap{display:grid;grid-template-columns:1fr 400px 1fr;align-items:center;gap:2rem;padding:0 4rem 3rem;max-width:1400px;margin:0 auto;width:100%;}
-#hero-canvas{width:400px;height:400px;display:block;filter:drop-shadow(0 0 30px rgba(107,0,0,0.5));}
-.hero-side-text{display:flex;flex-direction:column;gap:1.5rem;}
-.hero-stat{border-left:2px solid var(--blood);padding-left:1rem;}
-.hero-stat-label{font-family:'Oswald',sans-serif;font-size:0.6rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--burnt);margin-bottom:0.25rem;}
-.hero-stat-val{font-family:'Special Elite',cursive;font-size:1.4rem;color:var(--macadamia);line-height:1.1;}
-.hero-stat-val small{font-family:'Courier Prime',monospace;font-size:0.75rem;color:var(--lightgray);display:block;margin-top:0.2rem;}
-.scroll-prompt{text-align:center;padding-bottom:2rem;font-family:'Oswald',sans-serif;font-size:0.6rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--burnt);opacity:0.6;animation:pulse 2s infinite;}
-@keyframes pulse{0%,100%{opacity:0.4;}50%{opacity:0.9;}}
-
-/* ── SECTION 2 — GAME ARCADE ── */
-#arcade {
-  background: radial-gradient(circle at center, #140b07 0%, #050302 100%);
-  padding: 6rem 0 2rem;
+/* ══════════════════════════════════
+   NUEVA SECCIÓN: JUEGO PRINCIPAL
+══════════════════════════════════ */
+#juego-principal {
+  background: radial-gradient(circle at center, #1f0505 0%, var(--darkbg) 80%);
   display: flex;
   flex-direction: column;
   align-items: center;
-  font-family: 'Press Start 2P', monospace;
+  justify-content: center;
+  padding-top: 100px;
+  text-align: center;
 }
-.game-container-block {
-  position: relative;
-  width: 100%;
-  max-width: 640px;
-  margin: 0 auto;
-  padding: 0 10px;
+.game-hero-container {
+  max-width: 800px;
+  padding: 2rem;
   z-index: 10;
 }
-#game-screen-wrapper {
+.game-tag {
+  font-family: 'Oswald', sans-serif;
+  color: var(--blood);
+  font-size: 0.9rem;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+  text-shadow: 0 0 10px rgba(107,0,0,0.6);
+}
+.game-main-btn {
+  background: rgba(10, 7, 5, 0.8);
+  border: 2px solid var(--blood);
+  color: var(--macadamia);
+  font-family: 'Special Elite', cursive;
+  font-size: 1.5rem;
+  padding: 1.2rem 3rem;
+  letter-spacing: 0.15em;
+  cursor: pointer;
+  box-shadow: 0 0 20px rgba(107, 0, 0, 0.4);
+  transition: all 0.4s ease;
+  margin-top: 1.5rem;
   position: relative;
-  width: 100%;
-  aspect-ratio: 29 / 17;
-  background: #000;
-  border: 4px solid var(--rust);
-  box-shadow: 0 0 30px rgba(107,0,0,0.6);
   overflow: hidden;
 }
-#game-canvas {
+.game-main-btn:hover {
+  background: var(--blood);
+  color: var(--lightgray);
+  box-shadow: 0 0 35px var(--blood);
+  transform: scale(1.05);
+}
+
+/* INTERFAZ DEL JUEGO EN PANTALLA COMPLETA */
+#fullscreen-game-wrapper {
+  position: fixed;
+  inset: 0;
+  background: #000000;
+  z-index: 9999;
+  display: none; /* Se activa por JS */
+  width: 100vw;
+  height: 100vh;
+}
+/* Contenedor donde renderizaremos tu juego más adelante */
+#game-canvas-container {
   width: 100%;
   height: 100%;
-  display: block;
-  image-rendering: pixelated;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.game-placeholder-text {
+  font-family: 'Special Elite', cursive;
+  color: rgba(200,168,130,0.3);
+  font-size: 1.5rem;
+  text-align: center;
+  pointer-events: none;
 }
 
-/* ARCADE SCREENS */
-#screen-title, #screen-gameover, #screen-win {
-  position: absolute;inset: 0;z-index: 50;
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  background: radial-gradient(ellipse at center, #1a0805 0%, #000 80%);
-  padding: 1rem; text-align: center;
+/* BOTÓN FLOTANTE "R" (Móviles / Salida o Entrada) */
+.mobile-r-btn {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  width: 50px;
+  height: 50px;
+  background: rgba(107, 0, 0, 0.85);
+  border: 2px solid var(--macadamia);
+  border-radius: 50%;
+  color: var(--macadamia);
+  font-family: 'Special Elite', cursive;
+  font-size: 1.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10000;
+  box-shadow: 0 0 15px rgba(0,0,0,0.5);
+  transition: transform 0.2s active, background 0.3s;
 }
-.hidden { display: none !important; }
+.mobile-r-btn:active {
+  transform: scale(0.9);
+  background: var(--burnt);
+}
 
-.game-logo {
-  font-family: 'Special Elite', cursive; font-size: clamp(1.2rem, 4vw, 2.8rem);
-  color: var(--macadamia); text-shadow: 4px 4px 0 var(--blood); line-height: 1.2; margin-bottom: 0.5rem;
+/* CONTROLES TÁCTILES SIMULADOS (Zona de juego quieta) */
+.touch-controls-layer {
+  position: absolute;
+  bottom: 30px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 40px;
+  pointer-events: none; /* Deja pasar clicks al juego */
+  z-index: 10001;
 }
-.game-press { font-size: clamp(0.35rem, 1.5vw, 0.6rem); color: var(--lightgray); animation: blink 1.2s infinite; margin: 1rem 0; cursor: pointer;}
-@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+.touch-btn {
+  width: 65px;
+  height: 65px;
+  background: rgba(40, 30, 25, 0.6);
+  border: 1px solid rgba(200,168,130,0.4);
+  border-radius: 50%;
+  pointer-events: auto; /* Activa clicks solo para los botones */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--lightgray);
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.8rem;
+  user-select: none;
+}
 
-.game-ctrl-info {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem 1rem; font-size: 0.4rem; color: var(--macadamia);
+/* Pistas visuales de PC en la pantalla de carga */
+.pc-hint {
+  margin-top: 1rem;
+  font-size: 0.75rem;
+  color: var(--burnt);
+  letter-spacing: 0.1em;
 }
 
-/* HUD & INTERFACES */
-#game-hud {
-  position: absolute; top: 0; left: 0; right: 0; z-index: 40;
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 0.5rem; background: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent);
-  font-size: 0.45rem; color: var(--macadamia); pointer-events: none;
+/* ══════════════════════════════════
+   SECTION 1 — MAIN / HERO (ORIGINAL)
+══════════════════════════════════ */
+#main{
+  background:radial-gradient(ellipse at center, #1a0f0a 0%, var(--darkbg) 70%);
+  display:grid;grid-template-rows:auto 1fr;
+  padding-top:80px;
 }
-.hearts-container { display: flex; gap: 2px; color: #cc2200; }
-.heart-icon.empty { opacity: 0.25; }
 
-#game-minimap {
-  position: absolute; top: 40px; right: 10px; z-index: 40;
-  display: grid; gap: 2px; pointer-events: none;
+.hero-title-block{
+  text-align:center;padding:3rem 2rem 1rem;
+  position:relative;
 }
-.mm-cell { width: 10px; height: 8px; background: rgba(139,69,19,0.2); border: 1px solid rgba(139,69,19,0.3); }
-.mm-cell.visited { background: rgba(139,69,19,0.5); }
-.mm-cell.current { background: var(--macadamia); border-color: #fff; }
-.mm-cell.boss { background: var(--blood); }
+.hero-eyebrow{
+  font-family:'Oswald',sans-serif;font-size:0.7rem;
+  letter-spacing:0.4em;text-transform:uppercase;color:var(--coolblue);
+  margin-bottom:1rem;display:flex;align-items:center;justify-content:center;gap:1rem;
+}
+.hero-eyebrow::before,.hero-eyebrow::after{
+  content:'';display:block;width:40px;height:1px;background:var(--coolblue);opacity:0.5;
+}
+.main-title{
+  font-family:'Special Elite',cursive;
+  font-size:clamp(3rem,8vw,8rem);
+  line-height:0.9;letter-spacing:0.05em;
+  color:var(--macadamia);
+  text-shadow:
+    0 0 30px rgba(139,69,19,0.6),
+    0 0 80px rgba(107,0,0,0.3),
+    3px 3px 0 rgba(107,0,0,0.4);
+  animation:titleFlicker 8s infinite;
+  margin-bottom:0.5rem;
+}
+@keyframes titleFlicker{
+  0%,95%,100%{opacity:1;}
+  96%{opacity:0.85;}
+  97%{opacity:1;}
+  98%{opacity:0.9;}
+  99%{opacity:1;}
+}
+.title-sub{
+  font-family:'Oswald',sans-serif;font-size:0.9rem;
+  letter-spacing:0.5em;text-transform:uppercase;color:var(--burnt);
+  margin-bottom:0.5rem;
+}
+.title-divider{
+  display:flex;align-items:center;justify-content:center;gap:1rem;
+  margin:1.5rem auto;max-width:500px;
+}
+.title-divider span{height:1px;flex:1;background:linear-gradient(to right,transparent,var(--burnt),transparent);}
+.title-divider svg{width:20px;height:20px;fill:var(--blood);}
 
-#game-item-popup {
-  position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
-  z-index: 45; text-align: center; opacity: 0; transition: opacity 0.3s; pointer-events: none;
+/* 3D CANVAS HERO */
+.hero-canvas-wrap{
+  display:grid;grid-template-columns:1fr 400px 1fr;
+  align-items:center;gap:2rem;
+  padding:0 4rem 3rem;
+  max-width:1400px;margin:0 auto;width:100%;
 }
-#game-item-popup.show { opacity: 1; }
-.gpop-name { font-size: 0.45rem; color: var(--macadamia); margin-bottom: 2px; }
-.gpop-desc { font-size: 0.35rem; color: var(--lightgray); }
+#hero-canvas{
+  width:400px;height:400px;display:block;
+  filter:drop-shadow(0 0 30px rgba(107,0,0,0.5));
+}
+.hero-side-text{
+  display:flex;flex-direction:column;gap:1.5rem;
+}
+.hero-stat{
+  border-left:2px solid var(--blood);
+  padding-left:1rem;
+}
+.hero-stat-label{
+  font-family:'Oswald',sans-serif;font-size:0.6rem;
+  letter-spacing:0.25em;text-transform:uppercase;color:var(--burnt);
+  margin-bottom:0.25rem;
+}
+.hero-stat-val{
+  font-family:'Special Elite',cursive;font-size:1.4rem;
+  color:var(--macadamia);line-height:1.1;
+}
+.hero-stat-val small{
+  font-family:'Courier Prime',monospace;font-size:0.75rem;
+  color:var(--lightgray);display:block;margin-top:0.2rem;
+}
 
-#game-boss-bar {
-  position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); width: 70%;
-  z-index: 45; opacity: 0; transition: opacity 0.3s; pointer-events: none;
+/* SCROLL PROMPT */
+.scroll-prompt{
+  text-align:center;padding-bottom:2rem;
+  font-family:'Oswald',sans-serif;font-size:0.6rem;letter-spacing:0.3em;
+  text-transform:uppercase;color:var(--burnt);opacity:0.6;
+  animation:pulse 2s infinite;
 }
-#game-boss-bar.show { opacity: 1; }
-.gbb-bar { height: 6px; background: rgba(107,0,0,0.3); border: 1px solid var(--blood); margin-top: 2px;}
-.gbb-fill { height: 100%; background: var(--blood); width: 100%; }
+@keyframes pulse{0%,100%{opacity:0.4;}50%{opacity:0.9;}}
 
-#game-flash, #game-damage { position: absolute; inset:0; z-index:35; pointer-events:none; opacity:0; }
-#game-flash { background: rgba(139,69,19,0.4); }
-#game-damage { background: radial-gradient(transparent 50%, rgba(107,0,0,0.6)); }
-
-/* ── CONTROLES TÁCTILES MÓVILES ── */
-#mobile-controls {
-  display: none;
-  width: 100%; max-width: 640px;
-  margin-top: 15px; padding: 0 10px;
-  justify-content: space-between; align-items: center;
-  z-index: 100; -webkit-user-select: none; user-select: none;
-}
-.joystick-zone {
-  width: 110px; height: 110px; background: rgba(26,18,8,0.6);
-  border: 2px solid var(--rust); border-radius: 50%;
-  position: relative; display: flex; align-items: center; justify-content: center;
-}
-.joystick-stick {
-  width: 45px; height: 45px; background: var(--burnt);
-  border: 2px solid var(--macadamia); border-radius: 50%;
-  position: absolute; transition: transform 0.05s ease;
-}
-.action-pad {
-  display: grid; grid-template-columns: repeat(3, 40px); grid-template-rows: repeat(3, 40px); gap: 5px;
-}
-.btn-shoot {
-  background: rgba(107,0,0,0.5); border: 2px solid var(--redwood); color: var(--macadamia);
-  border-radius: 50%; font-size: 0.4rem; display: flex; align-items: center; justify-content: center;
-  cursor: pointer; font-weight: bold; active { background: var(--blood); }
-}
-.btn-shoot.b-up { grid-column: 2; grid-row: 1; }
-.btn-shoot.b-left { grid-column: 1; grid-row: 2; }
-.btn-shoot.b-right { grid-column: 3; grid-row: 2; }
-.btn-shoot.b-down { grid-column: 2; grid-row: 3; }
-
-/* Mostrar controles móviles si es táctil verificado por JS */
-.is-touch-device #mobile-controls { display: flex; }
-
-/* ── SECTION 3 — HISTORIA ── */
+/* ══════════════════════════════════
+   SECTION 2 — HISTORIA (ORIGINAL)
+══════════════════════════════════ */
 #historia{
   background:
     linear-gradient(180deg,var(--darkbg) 0%, #120c07 50%, var(--darkbg) 100%),
@@ -237,73 +367,194 @@ section{position:relative;z-index:2;min-height:100vh;overflow:hidden;}
     repeating-linear-gradient(90deg,rgba(139,69,19,0.02) 0px, rgba(139,69,19,0.02) 1px, transparent 1px, transparent 40px);
   padding:6rem 0;
 }
-.historia-inner{max-width:1200px;margin:0 auto;padding:0 3rem;}
-.historia-header{display:flex;align-items:flex-start;gap:3rem;margin-bottom:4rem;}
-.historia-num{font-family:'Special Elite',cursive;font-size:8rem;line-height:0.8;color:rgba(139,69,19,0.15);flex-shrink:0;-webkit-text-stroke:1px rgba(139,69,19,0.3);}
+.historia-inner{
+  max-width:1200px;margin:0 auto;padding:0 3rem;
+}
+.historia-header{
+  display:flex;align-items:flex-start;gap:3rem;margin-bottom:4rem;
+}
+.historia-num{
+  font-family:'Special Elite',cursive;font-size:8rem;line-height:0.8;
+  color:rgba(139,69,19,0.15);flex-shrink:0;
+  -webkit-text-stroke:1px rgba(139,69,19,0.3);
+}
 .historia-title-group{flex:1;}
-.historia-chapter{font-family:'Oswald',sans-serif;font-size:0.65rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--coolblue);margin-bottom:0.5rem;}
-.historia-h2{font-family:'Special Elite',cursive;font-size:clamp(2rem,4vw,4rem);color:var(--macadamia);text-shadow:0 0 20px rgba(107,0,0,0.4);line-height:1.1;margin-bottom:1rem;}
-.historia-tagline{font-size:0.85rem;color:var(--lightgray);line-height:1.8;max-width:500px;border-left:2px solid var(--blood);padding-left:1rem;}
+.historia-chapter{
+  font-family:'Oswald',sans-serif;font-size:0.65rem;letter-spacing:0.3em;
+  text-transform:uppercase;color:var(--coolblue);margin-bottom:0.5rem;
+}
+.historia-h2{
+  font-family:'Special Elite',cursive;
+  font-size:clamp(2rem,4vw,4rem);
+  color:var(--macadamia);
+  text-shadow:0 0 20px rgba(107,0,0,0.4);
+  line-height:1.1;margin-bottom:1rem;
+}
+.historia-tagline{
+  font-size:0.85rem;color:var(--lightgray);line-height:1.8;max-width:500px;
+  border-left:2px solid var(--blood);padding-left:1rem;
+}
 
-.timeline{position:relative;padding-left:2rem;}
-.timeline::before{content:'';position:absolute;left:0;top:0;bottom:0;width:1px;background:linear-gradient(to bottom, var(--blood), rgba(139,69,19,0.3), var(--blood));}
-.timeline-item{position:relative;padding-left:2.5rem;margin-bottom:3.5rem;opacity:0;transform:translateX(-30px);transition:opacity 0.7s ease,transform 0.7s ease;}
+/* TIMELINE */
+.timeline{
+  position:relative;padding-left:2rem;
+}
+.timeline::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:1px;
+  background:linear-gradient(to bottom, var(--blood), rgba(139,69,19,0.3), var(--blood));
+}
+.timeline-item{
+  position:relative;padding-left:2.5rem;margin-bottom:3.5rem;
+  opacity:0;transform:translateX(-30px);
+  transition:opacity 0.7s ease,transform 0.7s ease;
+}
 .timeline-item.visible{opacity:1;transform:translateX(0);}
 .timeline-dot{
-  position:absolute;left:-2.5rem;top:0.4rem;width:12px;height:12px;border-radius:50%;background:var(--blood);
-  box-shadow:0 0 10px var(--blood),0 0 20px rgba(107,0,0,0.5);animation:dotPulse 2s infinite;
+  position:absolute;left:-2.5rem;top:0.4rem;
+  width:12px;height:12px;border-radius:50%;
+  background:var(--blood);
+  box-shadow:0 0 10px var(--blood),0 0 20px rgba(107,0,0,0.5);
+  animation:dotPulse 2s infinite;
 }
-@keyframes dotPulse{0%,100%{box-shadow:0 0 6px var(--blood);}50%{box-shadow:0 0 15px var(--blood),0 0 30px rgba(107,0,0,0.6);}}
-.timeline-year{font-family:'Oswald',sans-serif;font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--burnt);margin-bottom:0.4rem;}
-.timeline-title{font-family:'Special Elite',cursive;font-size:1.3rem;color:var(--macadamia);margin-bottom:0.6rem;}
-.timeline-body{font-size:0.85rem;line-height:1.9;color:var(--lightgray);max-width:700px;}
+@keyframes dotPulse{
+  0%,100%{box-shadow:0 0 6px var(--blood);}
+  50%{box-shadow:0 0 15px var(--blood),0 0 30px rgba(107,0,0,0.6);}
+}
+.timeline-year{
+  font-family:'Oswald',sans-serif;font-size:0.65rem;letter-spacing:0.2em;
+  text-transform:uppercase;color:var(--burnt);margin-bottom:0.4rem;
+}
+.timeline-title{
+  font-family:'Special Elite',cursive;font-size:1.3rem;
+  color:var(--macadamia);margin-bottom:0.6rem;
+}
+.timeline-body{
+  font-size:0.85rem;line-height:1.9;color:var(--lightgray);max-width:700px;
+}
 .timeline-body em{color:var(--macadamia);font-style:italic;}
 
-.historia-split{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;margin-top:5rem;}
-.historia-canvas-wrap{position:relative;}
-.historia-canvas-wrap::before{content:'';position:absolute;inset:-20px;border:1px solid rgba(139,69,19,0.15);pointer-events:none;}
+/* HISTORIA 3D SIDE */
+.historia-split{
+  display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;
+  margin-top:5rem;
+}
+.historia-canvas-wrap{
+  position:relative;
+}
+.historia-canvas-wrap::before{
+  content:'';position:absolute;inset:-20px;
+  border:1px solid rgba(139,69,19,0.15);pointer-events:none;
+}
 #historia-canvas{width:100%;aspect-ratio:1;display:block;max-width:450px;margin:0 auto;}
 
 .lore-cards{display:flex;flex-direction:column;gap:1rem;}
-.lore-card{background:rgba(139,69,19,0.05);border:1px solid rgba(139,69,19,0.15);padding:1.2rem 1.5rem;position:relative;overflow:hidden;transition:background 0.3s,border-color 0.3s;}
-.lore-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--blood);}
+.lore-card{
+  background:rgba(139,69,19,0.05);
+  border:1px solid rgba(139,69,19,0.15);
+  padding:1.2rem 1.5rem;
+  position:relative;overflow:hidden;
+  transition:background 0.3s,border-color 0.3s;
+}
+.lore-card::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:2px;
+  background:var(--blood);
+}
 .lore-card:hover{background:rgba(139,69,19,0.1);border-color:rgba(139,69,19,0.4);}
-.lore-card-title{font-family:'Special Elite',cursive;font-size:1rem;color:var(--macadamia);margin-bottom:0.4rem;display:flex;align-items:center;gap:0.7rem;}
-.lore-card-title span{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--blood);}
+.lore-card-title{
+  font-family:'Special Elite',cursive;font-size:1rem;
+  color:var(--macadamia);margin-bottom:0.4rem;display:flex;align-items:center;gap:0.7rem;
+}
+.lore-card-title span{
+  display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--blood);
+}
 .lore-card-text{font-size:0.78rem;line-height:1.7;color:var(--lightgray);}
 
-/* ── SECTION 4 — LIBRO ── */
-#libro{background:var(--darkbg);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
-.libro-bg-glow{position:absolute;inset:0;background:radial-gradient(ellipse 60% 40% at 50% 50%, rgba(107,82,45,0.08) 0%, transparent 70%);}
-.libro-inner{text-align:center;position:relative;z-index:2;padding:4rem 2rem;}
-#libro-canvas{width:300px;height:300px;display:block;margin:0 auto 3rem;filter:drop-shadow(0 0 40px rgba(139,69,19,0.4));opacity:0.7;}
-.coming-soon-label{font-family:'Oswald',sans-serif;font-size:0.65rem;letter-spacing:0.4em;text-transform:uppercase;color:var(--burnt);margin-bottom:1rem;display:flex;align-items:center;justify-content:center;gap:1rem;}
+/* ══════════════════════════════════
+   SECTION 3 — LIBRO (ORIGINAL)
+══════════════════════════════════ */
+#libro{
+  background:var(--darkbg);
+  display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;
+}
+.libro-bg-glow{
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse 60% 40% at 50% 50%, rgba(107,82,45,0.08) 0%, transparent 70%);
+}
+.libro-inner{
+  text-align:center;position:relative;z-index:2;padding:4rem 2rem;
+}
+#libro-canvas{
+  width:300px;height:300px;display:block;margin:0 auto 3rem;
+  filter:drop-shadow(0 0 40px rgba(139,69,19,0.4));
+  opacity:0.7;
+}
+.coming-soon-label{
+  font-family:'Oswald',sans-serif;font-size:0.65rem;letter-spacing:0.4em;
+  text-transform:uppercase;color:var(--burnt);margin-bottom:1rem;
+  display:flex;align-items:center;justify-content:center;gap:1rem;
+}
 .coming-soon-label::before,.coming-soon-label::after{content:'✦';color:var(--blood);font-size:0.5rem;}
-.coming-soon-title{font-family:'Special Elite',cursive;font-size:clamp(2.5rem,6vw,6rem);color:var(--macadamia);text-shadow:0 0 40px rgba(139,69,19,0.5);margin-bottom:0.5rem;line-height:1;}
-.coming-soon-sub{font-family:'Special Elite',cursive;font-size:clamp(1.5rem,3vw,2.5rem);color:var(--burnt);letter-spacing:0.1em;margin-bottom:2rem;}
-.coming-soon-desc{font-size:0.8rem;color:var(--lightgray);line-height:1.9;max-width:420px;margin:0 auto 3rem;opacity:0.6;}
-.redacted-line{display:block;background:var(--burnt);color:transparent;user-select:none;margin:0.3rem auto;height:1.2em;}
-.redacted-line:nth-child(1){width:80%;} .redacted-line:nth-child(2){width:65%;} .redacted-line:nth-child(3){width:75%;}
+.coming-soon-title{
+  font-family:'Special Elite',cursive;
+  font-size:clamp(2.5rem,6vw,6rem);
+  color:var(--macadamia);
+  text-shadow:0 0 40px rgba(139,69,19,0.5);
+  margin-bottom:0.5rem;line-height:1;
+}
+.coming-soon-sub{
+  font-family:'Special Elite',cursive;
+  font-size:clamp(1.5rem,3vw,2.5rem);
+  color:var(--burnt);
+  letter-spacing:0.1em;margin-bottom:2rem;
+}
+.coming-soon-desc{
+  font-size:0.8rem;color:var(--lightgray);line-height:1.9;
+  max-width:420px;margin:0 auto 3rem;opacity:0.6;
+}
+.redacted-line{
+  display:block;
+  background:var(--burnt);color:transparent;
+  user-select:none;margin:0.3rem auto;
+  height:1.2em;
+}
+.redacted-line:nth-child(1){width:80%;}
+.redacted-line:nth-child(2){width:65%;}
+.redacted-line:nth-child(3){width:75%;}
 
+/* NOTIFY BOX */
 .notify-box{
-  display:inline-flex;align-items:center;gap:1rem;border:1px solid rgba(139,69,19,0.3);padding:0.8rem 2rem;
-  font-family:'Oswald',sans-serif;font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--lightgray);
-  background:rgba(139,69,19,0.05);transition:background 0.3s,border-color 0.3s;cursor:pointer;
+  display:inline-flex;align-items:center;gap:1rem;
+  border:1px solid rgba(139,69,19,0.3);padding:0.8rem 2rem;
+  font-family:'Oswald',sans-serif;font-size:0.7rem;letter-spacing:0.2em;
+  text-transform:uppercase;color:var(--lightgray);
+  background:rgba(139,69,19,0.05);
+  transition:background 0.3s,border-color 0.3s;cursor:pointer;
 }
 .notify-box:hover{background:rgba(139,69,19,0.12);border-color:var(--burnt);}
 .notify-dot{width:6px;height:6px;border-radius:50%;background:var(--blood);animation:pulse 1.5s infinite;}
 
+/* SCROLL REVEAL */
 .reveal{opacity:0;transform:translateY(40px);transition:opacity 0.8s ease,transform 0.8s ease;}
 .reveal.visible{opacity:1;transform:translateY(0);}
 
-footer{position:relative;z-index:2;padding:2rem 3rem;border-top:1px solid rgba(139,69,19,0.2);display:flex;align-items:center;justify-content:space-between;background:rgba(10,7,5,0.9);}
+/* ── FOOTER ── */
+footer{
+  position:relative;z-index:2;
+  padding:2rem 3rem;
+  border-top:1px solid rgba(139,69,19,0.2);
+  display:flex;align-items:center;justify-content:space-between;
+  background:rgba(10,7,5,0.9);
+}
 footer p{font-family:'Courier Prime',monospace;font-size:0.65rem;color:var(--burnt);letter-spacing:0.1em;}
 .footer-emblem{font-family:'Special Elite',cursive;color:var(--macadamia);font-size:1rem;letter-spacing:0.2em;}
 
+/* SCROLLBAR */
 ::-webkit-scrollbar{width:4px;}
 ::-webkit-scrollbar-track{background:var(--darkbg);}
 ::-webkit-scrollbar-thumb{background:var(--blood);}
 
+/* ── RESPONSIVE ── */
 @media(max-width:900px){
   .hero-canvas-wrap{grid-template-columns:1fr;justify-items:center;}
   #hero-canvas{width:300px;height:300px;}
@@ -311,29 +562,53 @@ footer p{font-family:'Courier Prime',monospace;font-size:0.65rem;color:var(--bur
   .historia-split{grid-template-columns:1fr;}
   .historia-header{flex-direction:column;gap:1rem;}
   .historia-num{font-size:4rem;}
-  nav{padding:1rem 1.5rem;} .nav-links{gap:1.2rem;}
+  nav{padding:1rem 1.5rem;}
+  .nav-links{gap:1.2rem;}
   .hero-canvas-wrap{padding:0 1.5rem 3rem;}
 }
 @media(max-width:600px){
-  .nav-links a:not(:nth-child(2)){display:none;}
+  .nav-links a:not(:last-child){display:none;}
   .historia-inner{padding:0 1.5rem;}
 }
 </style>
 </head>
 <body>
 
+<!-- INTERFAZ DEL JUEGO COMPLETO (OCULTA POR DEFECTO) -->
+<div id="fullscreen-game-wrapper">
+  <!-- Botón "R" para móviles o re-entrada -->
+  <button class="mobile-r-btn" id="r-exit-btn" title="Salir/Regresar">R</button>
+  
+  <!-- Controles táctiles en pantalla -->
+  <div class="touch-controls-layer">
+    <div class="touch-btn">← Izq</div>
+    <div class="touch-btn">Acción</div>
+    <div class="touch-btn">Der →</div>
+  </div>
+
+  <!-- Contenedor Base del Futuro Juego -->
+  <div id="game-canvas-container">
+    <div class="game-placeholder-text">
+      [ PANTALLA COMPLETA ACTIVADA ]<br>
+      <span style="font-size: 0.9rem; color: var(--blood);">El código del juego se inyectará aquí de forma nativa.</span>
+    </div>
+  </div>
+</div>
+
+<!-- BLOOD DRIPS -->
 <div class="blood-drip" id="blood-drip"></div>
 
 <!-- NAVIGATION -->
 <nav>
   <div class="nav-logo">THE RED GALLERY</div>
   <div class="nav-links">
+    <a href="#juego-principal">Juego</a>
     <a href="#main">Inicio</a>
-    <a href="#arcade">Arcade</a>
     <a href="#historia">Historia</a>
     <a href="#libro">El Libro</a>
   </div>
   <div class="nav-emblem">
+    <!-- Umbrella-like RE emblem -->
     <svg viewBox="0 0 40 40" fill="none">
       <circle cx="20" cy="20" r="18" stroke="#8B4513" stroke-width="1.5"/>
       <circle cx="20" cy="20" r="10" stroke="#6B0000" stroke-width="1"/>
@@ -344,158 +619,180 @@ footer p{font-family:'Courier Prime',monospace;font-size:0.65rem;color:var(--bur
   </div>
 </nav>
 
-<!-- HERO MAIN -->
+<!-- ══════════════════════════════
+  NUEVA SECCIÓN PRINCIPAL: JUEGO
+══════════════════════════════ -->
+<section id="juego-principal">
+  <div class="section-frame"></div>
+  <div class="game-hero-container reveal">
+    <div class="game-tag">// PROTOCOLO DE SIMULACIÓN EN VIVO</div>
+    <h2 class="main-title" style="font-size: clamp(2rem, 6vw, 5rem);">PROYECTO: SURVIVAL</h2>
+    <p class="title-sub" style="color: var(--lightgray); max-width: 600px; margin: 1rem auto; font-size: 0.85rem;">
+      Ingresa a la zona de pruebas interactiva. Una simulación directa diseñada para ejecutarse a pantalla completa.
+    </p>
+    <button class="game-main-btn" id="start-game-trigger">INICIAR SIMULACIÓN</button>
+    <div class="pc-hint">En PC: Presiona ESC para salir | En Móvil: Usa el botón R</div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════
+  SECTION 1 — MAIN (ANTERIOR HERO)
+══════════════════════════════ -->
 <section id="main">
   <div class="section-frame"></div>
+
   <div class="hero-title-block reveal">
     <div class="hero-eyebrow">Bienvenido al Umbral</div>
     <h1 class="main-title">THE RED<br>GALLERY</h1>
     <div class="title-sub">Una colección oscura</div>
     <div class="title-divider">
-      <span></span><svg viewBox="0 0 20 20"><path d="M10 0l2 7h7l-6 4 2 7-5-4-5 4 2-7-6-4h7z"/></svg><span></span>
+      <span></span>
+      <svg viewBox="0 0 20 20"><path d="M10 0l2 7h7l-6 4 2 7-5-4-5 4 2-7-6-4h7z"/></svg>
+      <span></span>
     </div>
   </div>
 
   <div class="hero-canvas-wrap">
+    <!-- LEFT STATS -->
     <div class="hero-side-text reveal" style="text-align:right;align-items:flex-end;">
       <div class="hero-stat" style="border-left:none;border-right:2px solid var(--blood);padding-left:0;padding-right:1rem;">
-        <div class="hero-stat-label">Estado</div><div class="hero-stat-val">ACTIVO<small>Sistema en línea</small></div>
+        <div class="hero-stat-label">Estado</div>
+        <div class="hero-stat-val">ACTIVO
+          <small>Sistema en línea</small>
+        </div>
       </div>
       <div class="hero-stat" style="border-left:none;border-right:2px solid var(--blood);padding-left:0;padding-right:1rem;">
-        <div class="hero-stat-label">Protocolo</div><div class="hero-stat-val">ROJO<small>Nivel máximo</small></div>
+        <div class="hero-stat-label">Protocolo</div>
+        <div class="hero-stat-val">ROJO<small>Nivel máximo</small></div>
+      </div>
+      <div class="hero-stat" style="border-left:none;border-right:2px solid var(--blood);padding-left:0;padding-right:1rem;">
+        <div class="hero-stat-label">Código</div>
+        <div class="hero-stat-val">T-V1RUS<small>Clasificado</small></div>
       </div>
     </div>
 
+    <!-- MAIN 3D -->
     <canvas id="hero-canvas"></canvas>
 
+    <!-- RIGHT STATS -->
     <div class="hero-side-text reveal">
       <div class="hero-stat">
-        <div class="hero-stat-label">Arcade</div><div class="hero-stat-val">JUGABLE<small>Prueba el juego abajo</small></div>
+        <div class="hero-stat-label">Contenido</div>
+        <div class="hero-stat-val">3 Salas<small>Explorar galería</small></div>
       </div>
       <div class="hero-stat">
-        <div class="hero-stat-label">Amenaza</div><div class="hero-stat-val">CRÍTICA<small>No entrar solo</small></div>
+        <div class="hero-stat-label">Origen</div>
+        <div class="hero-stat-val">Raccoon<small>Ciudad maldita</small></div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-label">Amenaza</div>
+        <div class="hero-stat-val">CRÍTICA<small>No entrar solo</small></div>
       </div>
     </div>
   </div>
-  <div class="scroll-prompt">↓ Desplaza para jugar ↓</div>
+
+  <div class="scroll-prompt">↓ Desplaza para explorar ↓</div>
 </section>
 
 <!-- ══════════════════════════════
-  NUEVA SECCIÓN: ARCADE GAME
+  SECTION 2 — HISTORIA
 ══════════════════════════════ -->
-<section id="arcade">
-  <div class="section-frame"></div>
-  
-  <div class="game-container-block">
-    <div id="game-screen-wrapper">
-      
-      <!-- PANTALLA INICIAL -->
-      <div id="screen-title">
-        <div class="game-logo">THE RED GALLERY<br><span style="font-size:0.5rem; color:var(--coolblue);">THE BINDING OF ISAAC MINI</span></div>
-        <div class="game-press" id="start-trigger">[ PRESIONA AQUÍ O ENTER PARA COMENZAR ]</div>
-        <div class="game-ctrl-info">
-          <div>Mover: WASD / Joystick</div>
-          <div>Disparar: IJKL / Botones</div>
-        </div>
-      </div>
-
-      <!-- GAME OVER -->
-      <div id="screen-gameover" class="hidden">
-        <div class="game-logo" style="color:var(--blood);">GAME OVER</div>
-        <div id="go-score" style="font-size:0.35rem; margin-bottom:1rem;"></div>
-        <div class="game-press" id="retry-trigger">[ Toca o Enter para reintentar ]</div>
-      </div>
-
-      <!-- VICTORIA -->
-      <div id="screen-win" class="hidden">
-        <div class="game-logo" style="color:var(--macadamia);">¡VICTORIA!</div>
-        <div id="win-score" style="font-size:0.35rem; margin-bottom:1rem;"></div>
-        <div class="game-press" id="win-trigger">[ Toca o Enter para reiniciar ]</div>
-      </div>
-
-      <!-- HUD JUEGO -->
-      <div id="game-hud" class="hidden">
-        <div class="hearts-container" id="hud-hearts"></div>
-        <div>
-          <div id="hud-floor">PISO 1</div>
-        </div>
-        <div>
-          <div id="hud-score">0 pts</div>
-          <div id="hud-coins" style="font-size:0.35rem; color:var(--coolblue);">✦ 0</div>
-        </div>
-      </div>
-
-      <!-- MINIMAP -->
-      <div id="game-minimap" class="hidden"></div>
-
-      <!-- POPUPS Y ALERTAS -->
-      <div id="game-flash"></div>
-      <div id="game-damage"></div>
-      <div id="game-item-popup">
-        <div class="gpop-name" id="popup-name"></div>
-        <div class="gpop-desc" id="popup-desc"></div>
-      </div>
-      
-      <!-- BARRA DE JEFE -->
-      <div id="game-boss-bar">
-        <div style="font-size:0.3rem; color:var(--blood); text-align:center;">JEFE FINAL</div>
-        <div class="gbb-bar"><div class="gbb-fill" id="boss-fill"></div></div>
-      </div>
-
-      <!-- CANVAS RENDER -->
-      <canvas id="game-canvas"></canvas>
-    </div>
-  </div>
-
-  <!-- MANDOS VIRTUALES TÁCTILES -->
-  <div id="mobile-controls">
-    <div class="joystick-zone" id="touch-joystick">
-      <div class="joystick-stick" id="touch-stick"></div>
-    </div>
-    <div class="action-pad">
-      <div class="btn-shoot b-up" id="btn-i">I</div>
-      <div class="btn-shoot b-left" id="btn-j">J</div>
-      <div class="btn-shoot b-right" id="btn-l">L</div>
-      <div class="btn-shoot b-down" id="btn-k">K</div>
-    </div>
-  </div>
-</section>
-
-<!-- HISTORIA -->
 <section id="historia">
   <div class="section-frame"></div>
   <div class="historia-inner">
+
     <div class="historia-header reveal">
       <div class="historia-num">02</div>
       <div class="historia-title-group">
         <div class="historia-chapter">// Capítulo — La Historia</div>
         <h2 class="historia-h2">El origen<br>de las sombras</h2>
-        <p class="historia-tagline">Cada historia tiene sus raíces en la oscuridad.</p>
+        <p class="historia-tagline">
+          Cada historia tiene sus raíces en la oscuridad.<br>
+          Aquí comienza la tuya — en el umbral donde<br>
+          la ciencia se convierte en maldición.
+        </p>
       </div>
     </div>
 
+    <!-- TIMELINE -->
     <div class="timeline">
       <div class="timeline-item">
         <div class="timeline-dot"></div>
         <div class="timeline-year">// Capítulo I</div>
         <div class="timeline-title">El Primer Umbral</div>
-        <div class="timeline-body">Lo que una vez fue ciencia se convirtió en algo inimaginable.</div>
+        <div class="timeline-body">
+          Todo comenzó con una decisión inocente — o eso parecía. Las primeras
+          páginas de esta historia se escriben con tinta invisible, legible solo
+          bajo la luz roja de la galería. <em>Lo que una vez fue ciencia
+          se convirtió en algo inimaginable.</em>
+        </div>
       </div>
-    </div>
-
-    <div class="historia-split">
-      <div class="historia-canvas-wrap reveal"><canvas id="historia-canvas"></canvas></div>
-      <div class="lore-cards reveal">
-        <div class="lore-card">
-          <div class="lore-card-title"><span></span>El Laboratorio Subterráneo</div>
-          <div class="lore-card-text">Un complejo de investigación construido bajo tierra.</div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-year">// Capítulo II</div>
+        <div class="timeline-title">La Corporación de las Sombras</div>
+        <div class="timeline-body">
+          Detrás de cada tragedia hay un nombre, una firma, un sello rojo sobre
+          documentos que jamás deberían haber existido. <em>La Corporación
+          construyó sus cimientos sobre secretos enterrados</em> en las profundidades
+          de laboratorios sin número.
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-year">// Capítulo III</div>
+        <div class="timeline-title">El Virus Carmesí</div>
+        <div class="timeline-body">
+          Nadie esperaba que el experimento escapara del laboratorio. El llamado
+          <em>Virus Carmesí</em> no era un accidente — era el resultado de décadas
+          de investigación prohibida. Cuando se liberó, la ciudad nunca volvió a
+          ser la misma.
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-year">// Capítulo IV</div>
+        <div class="timeline-title">Los Supervivientes</div>
+        <div class="timeline-body">
+          En medio del caos, algunos encontraron la fuerza para resistir.
+          No porque fueran héroes — <em>sino porque no tenían otra opción.</em>
+          Sus historias se entrecruzan aquí, en The Red Gallery, como hilos
+          de una tela que aún se está tejiendo.
         </div>
       </div>
     </div>
+
+    <!-- 3D + LORE CARDS -->
+    <div class="historia-split">
+      <div class="historia-canvas-wrap reveal">
+        <canvas id="historia-canvas"></canvas>
+      </div>
+      <div class="lore-cards reveal" style="transition-delay:0.2s;">
+        <div class="lore-card">
+          <div class="lore-card-title"><span></span>El Laboratorio Subterráneo</div>
+          <div class="lore-card-text">Un complejo de investigación construido bajo tierra, invisible para el mundo exterior. Sus pasillos guardan secretos que pocos han sobrevivido para contar.</div>
+        </div>
+        <div class="lore-card">
+          <div class="lore-card-title"><span></span>La Orden de Sangre</div>
+          <div class="lore-card-text">Un grupo de científicos que cruzaron la línea entre la ética y la obsesión. Su legado es el horror que habita estas páginas.</div>
+        </div>
+        <div class="lore-card">
+          <div class="lore-card-title"><span></span>Archivos Clasificados</div>
+          <div class="lore-card-text">Documentos que la corporación intentó borrar. Fragmentos de verdad preservados en la memoria de quienes los leyeron antes del incendio.</div>
+        </div>
+        <div class="lore-card">
+          <div class="lore-card-title"><span></span>El Último Informe</div>
+          <div class="lore-card-text">Fecha: <em style="color:var(--macadamia)">REDACTADA</em>. Clasificación: <em style="color:var(--blood)">NIVEL OMEGA</em>. Contenido: lo que vino después del fin.</div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </section>
 
-<!-- LIBRO -->
+<!-- ══════════════════════════════
+  SECTION 3 — LIBRO
+══════════════════════════════ -->
 <section id="libro">
   <div class="section-frame"></div>
   <div class="libro-bg-glow"></div>
@@ -504,450 +801,406 @@ footer p{font-family:'Courier Prime',monospace;font-size:0.65rem;color:var(--bur
     <div class="coming-soon-label">Sala III — En Construcción</div>
     <div class="coming-soon-title">EL LIBRO</div>
     <div class="coming-soon-sub">Próximamente</div>
+    <div class="coming-soon-desc">
+      <span class="redacted-line"></span>
+      <span class="redacted-line"></span>
+      <span class="redacted-line"></span>
+    </div>
+    <div class="notify-box">
+      <span class="notify-dot"></span>
+      Acceso restringido — En preparación
+    </div>
   </div>
 </section>
 
+<!-- FOOTER -->
 <footer>
   <div class="footer-emblem">THE RED GALLERY</div>
   <p>© 2026 — Todos los archivos clasificados</p>
+  <p>PROTOCOLO ROJO ACTIVO</p>
 </footer>
 
 <!-- THREE.JS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-
 <script>
-// DETECCIÓN DISPOSITIVO TÁCTIL
-if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
-  document.body.classList.add('is-touch-device');
-}
-
 // ══════════════════════════════════════════
-//  CÓDIGO DEL JUEGO (INTEGRADO Y OPTIMIZADO)
+// LÓGICA DE CONTROL DE PANTALLA COMPLETA
 // ══════════════════════════════════════════
-const TILE = 16;
-const COLS = 29, ROWS = 17;
-const W = COLS * TILE, H = ROWS * TILE;
+const startButton = document.getElementById('start-game-trigger');
+const gameWrapper = document.getElementById('fullscreen-game-wrapper');
+const exitRButton = document.getElementById('r-exit-btn');
 
-const gCanvas = document.getElementById('game-canvas');
-const gCtx = gCanvas.getContext('2d');
-gCanvas.width = W;
-gCanvas.height = H;
-
-const C = {
-  floor: '#1c1208', floorAlt: '#181008', wall: '#0d0705', wallTop: '#2a1a0a',
-  wallShad: '#050302', wallLight: '#3a2510', door: '#3a2010', doorOpen: '#2a1808',
-  player: '#C8A882', playerHd: '#d4b48e', tear: '#6B8FA3', tearGlow: '#a0c8e0',
-  enemy: '#8B4513', enemyDark: '#5a2a08', enemyEye: '#ff2200', enemyEye2: '#ffaa00',
-  boss: '#6B0000', bossDark: '#2a0000', bossEye: '#ff0000', blood: '#6B0000',
-  bloodDark: '#3a0000', coin: '#C8A882', coinShine: '#ffe8a0', heart: '#cc2200',
-  heartDark: '#880000', item: '#a855f7', itemGlow: '#d4a0ff', rock: '#2a1a08',
-  rockDark: '#1a0e04', pit: '#050302', explosion: '#ff6600', expl2: '#ffcc00'
-};
-
-let keys = {};
-let state = 'title', score = 0, coins = 0, floor = 1, roomsCleared = 0;
-let popupTimer = 0;
-const MAP_W = 3, MAP_H = 3;
-let dungeon = [], currentRoom = {x:1, y:1};
-let roomObjects = [], enemies = [], projectiles = [], particles = [], items = [];
-let bossRoom = {x:2, y:0};
-
-// Variables para Joystick virtual
-let touchMoveVector = { x: 0, y: 0 };
-
-const player = {
-  x: W/2, y: H/2, w: 14, h: 14, speed: 1.8, hp: 6, maxHp: 6,
-  shotCooldown: 0, shotDelay: 18, shotSpeed: 4.5, shotDmg: 1,
-  iframes: 0, facing: {x: 0, y: -1}, piercing: false, explosive: false
-};
-
-// Listeners teclado
-window.addEventListener('keydown', e => { 
-  keys[e.code] = true; 
-  if(['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code)) e.preventDefault(); 
-});
-window.addEventListener('keyup', e => { keys[e.code] = false; });
-
-// Mapear botones táctiles de disparo
-const touchShoot = { up: false, down: false, left: false, right: false };
-function bindTouchBtn(id, targetProp) {
-  const btn = document.getElementById(id);
-  btn.addEventListener('touchstart', (e) => { e.preventDefault(); touchShoot[targetProp] = true; });
-  btn.addEventListener('touchend', (e) => { e.preventDefault(); touchShoot[targetProp] = false; });
-}
-bindTouchBtn('btn-i', 'up');
-bindTouchBtn('btn-k', 'down');
-bindTouchBtn('btn-j', 'left');
-bindTouchBtn('btn-l', 'right');
-
-// Lógica de Joystick arrastrable
-const joystickZone = document.getElementById('touch-joystick');
-const joystickStick = document.getElementById('touch-stick');
-let joystickActive = false;
-
-joystickZone.addEventListener('touchstart', (e) => {
-  joystickActive = true;
-  handleJoystickMove(e.touches[0]);
-});
-window.addEventListener('touchmove', (e) => {
-  if (!joystickActive) return;
-  handleJoystickMove(e.touches[0]);
-}, {passive: false});
-window.addEventListener('touchend', () => {
-  if (!joystickActive) return;
-  joystickActive = false;
-  joystickStick.style.transform = `translate(0px, 0px)`;
-  touchMoveVector = { x: 0, y: 0 };
-});
-
-function handleJoystickMove(touch) {
-  const rect = joystickZone.getBoundingClientRect();
-  const centerX = rect.left + rect.width / 2;
-  const centerY = rect.top + rect.height / 2;
-  let dx = touch.clientX - centerX;
-  let dy = touch.clientY - centerY;
-  const dist = Math.sqrt(dx*dx + dy*dy);
-  const maxDist = rect.width / 2;
-
-  if (dist > maxDist) {
-    dx = (dx / dist) * maxDist;
-    dy = (dy / dist) * maxDist;
-  }
-  joystickStick.style.transform = `translate(${dx}px, ${dy}px)`;
+function abrirJuego() {
+  gameWrapper.style.display = 'block';
+  document.body.classList.add('playing-game');
   
-  // Guardar vector normalizado
-  touchMoveVector = { x: dx / maxDist, y: dy / maxDist };
+  // Intenta forzar el Fullscreen API del navegador si es soportado
+  if (gameWrapper.requestFullscreen) {
+    gameWrapper.requestFullscreen();
+  } else if (gameWrapper.webkitRequestFullscreen) { /* Safari */
+    gameWrapper.webkitRequestFullscreen();
+  }
 }
 
-// Triggers pantallas interfaces
-document.getElementById('start-trigger').addEventListener('click', startGame);
-document.getElementById('retry-trigger').addEventListener('click', startGame);
-document.getElementById('win-trigger').addEventListener('click', startGame);
-document.getElementById('start-trigger').addEventListener('touchstart', (e) => {e.preventDefault(); startGame();});
-document.getElementById('retry-trigger').addEventListener('touchstart', (e) => {e.preventDefault(); startGame();});
-document.getElementById('win-trigger').addEventListener('touchstart', (e) => {e.preventDefault(); startGame();});
-
-// Funciones gráficas base fijadas del código original
-function pxRect(x,y,w,h,col){ gCtx.fillStyle=col; gCtx.fillRect(Math.round(x),Math.round(y),w,h); }
-function pxShadow(x,y,w,h,col,alpha=0.4){ gCtx.globalAlpha=alpha; gCtx.fillStyle=col; gCtx.fillRect(Math.round(x+2),Math.round(y+2),w,h); gCtx.globalAlpha=1; }
-
-function drawPlayer(x,y,facing){
-  const px=Math.round(x-7), py=Math.round(y-7); pxShadow(px,py,14,14,'#000',0.35);
-  pxRect(px+1,py+6, 12,8, '#8B4513'); pxRect(px+2,py+7, 10,6, '#a05020');
-  pxRect(px+2,py+13,4,3,C.player); pxRect(px+8,py+13,4,3,C.player);
-  pxRect(px+1,py, 12,8, C.playerHd); pxRect(px+2,py+1, 10,7, C.player);
-  const ex = facing.x>0?7:facing.x<0?3:5; pxRect(px+ex-1,py+3,3,3,'#fff'); pxRect(px+ex-1+1,py+3+1,2,2,'#000');
-  if(facing.x!==0||facing.y!==0){ const tx=px+7+facing.x*5, ty=py+4+facing.y*4; gCtx.globalAlpha=0.5; pxRect(tx-1,ty-1,3,3,C.tearGlow); gCtx.globalAlpha=1; }
-  pxRect(px+2,py,10,2,C.burnt); pxRect(px,py+1,2,4,'#3a1a04'); pxRect(px+12,py+1,2,4,'#3a1a04');
+function cerrarJuego() {
+  gameWrapper.style.display = 'none';
+  document.body.classList.remove('playing-game');
+  
+  // Sale del Fullscreen real si estaba activo
+  if (document.fullscreenElement) {
+    document.exitFullscreen();
+  } else if (document.webkitExitFullscreen) {
+    document.webkitExitFullscreen();
+  }
 }
 
-function drawEnemy(e){
-  const px=Math.round(e.x-e.w/2), py=Math.round(e.y-e.h/2); pxShadow(px,py,e.w,e.h,'#000',0.4);
-  if(e.type==='fly'){
-    pxRect(px,py+e.h/3, e.w, e.h*2/3, C.enemyDark); pxRect(px+1,py+e.h/3+1, e.w-2, e.h*2/3-2, C.enemy); pxRect(px+1,py, e.w-2, e.h/2+2, C.enemy);
-    pxRect(px+2,py+4,4,4,'#fff'); pxRect(px+e.w-6,py+4,4,4,'#fff'); pxRect(px+3,py+5,3,3,C.enemyEye); pxRect(px+e.w-5,py+5,3,3,C.enemyEye);
-    const wAnim = Math.sin(e.animT||0)*3; gCtx.globalAlpha=0.6; pxRect(px-4,py+2+wAnim,4,4,C.enemyDark); pxRect(px+e.w,py+2+wAnim,4,4,C.enemyDark); gCtx.globalAlpha=1;
-  } else if(e.type==='knight'){
-    pxRect(px,py+4, e.w,e.h-4, '#3a3020'); pxRect(px+1,py+5, e.w-2,e.h-6, '#5a4a2a'); pxRect(px+2,py, e.w-4,8,'#2a200a'); pxRect(px+3,py+1,e.w-6,6,C.enemy);
-    pxRect(px+4,py+3,3,3,'#fff'); pxRect(px+e.w-7,py+3,3,3,'#fff'); pxRect(px+4+1,py+4,2,2,C.enemyEye2); pxRect(px+e.w-7+1,py+4,2,2,C.enemyEye2);
+// Eventos de activación
+startButton.addEventListener('click', abrirJuego);
+exitRButton.addEventListener('click', () => {
+  // Si ya está cerrado, este mismo botón podría re-abrirlo en móvil si fuese necesario, pero actúa de conmutador nativo
+  if (gameWrapper.style.display === 'block') {
+    cerrarJuego();
   } else {
-    pxRect(px+2,py+2, e.w-4,e.h-4, C.enemy); pxRect(px+1,py+1, e.w-2,e.h-2, C.enemy); pxRect(px+2,py, e.w-4,2, '#c06020');
-    pxRect(px+3,py+3,4,4,'#fff'); pxRect(px+e.w-7,py+3,4,4,'#fff'); pxRect(px+4,py+4,3,3,C.enemyEye); pxRect(px+e.w-6,py+4,3,3,C.enemyEye);
+    abrirJuego();
   }
-  if(e.hp<e.maxHp){ const bw=e.w, bh=3, bx=px, by=py-5; pxRect(bx,by,bw,bh,'#1a0a05'); pxRect(bx,by,Math.round(bw*(e.hp/e.maxHp)),bh,C.blood); }
-}
+});
 
-function drawBoss(b){
-  const px=Math.round(b.x-b.w/2), py=Math.round(b.y-b.h/2); pxShadow(px,py,b.w,b.h,'#000',0.5);
-  pxRect(px+2,py+b.h/3, b.w-4,b.h*2/3+2, C.bossDark); pxRect(px+4,py+b.h/3+2, b.w-8,b.h*2/3-2, C.boss);
-  pxRect(px,py+4, b.w,b.h/3, C.boss); pxRect(px+2,py, b.w-4,b.h/3+4, C.bossDark); pxRect(px+3,py+1, b.w-6,b.h/3+2, C.boss);
-  const eyeFlash = Math.sin(Date.now()*0.005)>0.7; pxRect(px+4,py+b.h/3-4,6,6,'#fff'); pxRect(px+b.w-10,py+b.h/3-4,6,6,'#fff');
-  pxRect(px+5,py+b.h/3-3,4,4, eyeFlash?'#ff6600':C.bossEye); pxRect(px+b.w-9,py+b.h/3-3,4,4, eyeFlash?'#ff6600':C.bossEye);
-  pxRect(px+3,py-4,4,6,'#2a0a04'); pxRect(px+b.w-7,py-4,4,6,'#2a0a04'); pxRect(px+4,py-6,3,4,C.boss); pxRect(px+b.w-7,py-6,3,4,C.boss);
-  const ta=Math.sin(b.animT||0)*4; pxRect(px-8,py+b.h/2+ta,8,6,C.boss); pxRect(px+b.w,py+b.h/2-ta,8,6,C.boss);
-  const bw=b.w, by2=py-8; pxRect(Math.round(b.x-bw/2),by2,bw,4,'#1a0a05'); pxRect(Math.round(b.x-bw/2),by2,Math.round(bw*(b.hp/b.maxHp)),4,C.blood);
-}
-
-function drawTear(t){
-  const px=Math.round(t.x), py=Math.round(t.y); const r=t.r||4;
-  gCtx.globalAlpha=0.25; pxRect(px-r-1,py-r-1,(r+1)*2+2,(r+1)*2+2, t.isEnemy?C.blood:C.tearGlow); gCtx.globalAlpha=1;
-  pxRect(px-r,py-r,r*2,r*2, t.isEnemy?C.blood:C.tear); pxRect(px-r+1,py-r+1,r*2-2,r*2-2, t.isEnemy?C.blood:C.coolblue); pxRect(px-1,py-1,2,2,'#fff');
-}
-function drawHeart(x,y){
-  const px=Math.round(x-6),py=Math.round(y-5); pxRect(px+1,py,2,2,C.heart); pxRect(px+4,py,2,2,C.heart); pxRect(px,py+1,6,2,C.heart);
-  pxRect(px+1,py+2,4,4,C.heart); pxRect(px+2,py+5,2,2,C.heart); pxRect(px+1,py+4,4,1,C.heart); pxRect(px+2,py+1,2,1,C.heartDark); pxRect(px+1,py+2,2,1,C.heartDark);
-}
-function drawCoin(x,y,anim){ const s=Math.abs(Math.sin(anim||0))*3+3; const px=Math.round(x-s/2),py=Math.round(y-4); pxRect(px,py,s,8,C.coin); pxRect(px+1,py+1,Math.max(1,s-2),2,C.coinShine); pxRect(px+Math.floor(s/2)-1,py+2,2,4,C.coinShine); }
-function drawItem(item){ const px=Math.round(item.x-8), py=Math.round(item.y-8); pxRect(px-2,py+12,20,4,'#2a1a0a'); pxRect(px-1,py+10,18,4,'#3a2510'); gCtx.globalAlpha=0.15+Math.sin(Date.now()*0.004)*0.08; pxRect(px-4,py-4,24,24,C.itemGlow); gCtx.globalAlpha=1; pxRect(px+2,py+2,12,12,C.item); pxRect(px+3,py+3,10,10,'#c084fc'); pxRect(px+5,py+5,6,6,'#e8c0ff'); }
-function drawRock(x,y){ pxRect(x+2,y+6,12,10,C.rockDark); pxRect(x+1,y+3,14,12,C.rock); pxRect(x+3,y+1,10,13,C.rock); }
-function drawPit(x,y){ gCtx.globalAlpha=0.85; pxRect(x+1,y+1,14,14,C.pit); gCtx.globalAlpha=0.5; pxRect(x+2,y+2,12,12,'#020102'); gCtx.globalAlpha=1; }
-function drawParticle(p){ gCtx.globalAlpha=p.life/p.maxLife; pxRect(Math.round(p.x),Math.round(p.y),p.size,p.size,p.col); gCtx.globalAlpha=1; }
-
-function drawRoom(room){
-  for(let ty=1;ty<ROWS-1;ty++){ for(let tx=1;tx<COLS-1;tx++){ gCtx.fillStyle=(tx+ty)%3===0?C.floorAlt:C.floor; gCtx.fillRect(tx*TILE,ty*TILE,TILE,TILE); } }
-  for(let tx=0;tx<COLS;tx++){ gCtx.fillStyle=C.wallTop; gCtx.fillRect(tx*TILE,0,TILE,TILE); gCtx.fillStyle=C.wall; gCtx.fillRect(tx*TILE,(ROWS-1)*TILE,TILE,TILE); }
-  for(let ty=0;ty<ROWS;ty++){ gCtx.fillStyle=C.wall; gCtx.fillRect(0,ty*TILE,TILE,TILE); gCtx.fillRect((COLS-1)*TILE,ty*TILE,TILE,TILE); }
-  
-  const d=room.doors;
-  const mid=(dir)=>{
-    if(dir==='N'||dir==='S') return {x:Math.floor(COLS/2)*TILE, y:(dir==='N'?0:(ROWS-1))*TILE, w:TILE*3, h:TILE};
-    return {x:(dir==='W'?0:(COLS-1))*TILE, y:Math.floor(ROWS/2)*TILE, w:TILE, h:TILE*3};
-  };
-  ['N','S','W','E'].forEach(dir=>{
-    if(!d[dir]) return; const m=mid(dir); const open=d[dir].open||room.cleared;
-    gCtx.fillStyle=open?C.doorOpen:C.door; gCtx.fillRect(m.x,m.y,m.w,m.h);
-  });
-  roomObjects.forEach(o=>{ if(o.type==='rock') drawRock(o.x*TILE,o.y*TILE); else if(o.type==='pit') drawPit(o.x*TILE,o.y*TILE); });
-}
-
-// LÓGICA MAPAS, ENEMIGOS E ITEMS
-const ITEMS_LIST=[
-  {name:'Lágrimas de Sangre', desc:'Dispara más rápido y con más daño', effect:p=>{p.shotDelay=Math.max(8,p.shotDelay-6);p.shotDmg+=1;}},
-  {name:'Corazón Rojo', desc:'+2 HP máximos', effect:p=>{p.maxHp+=2;p.hp=Math.min(p.hp+2,p.maxHp);}},
-  {name:'Virus Carmesí', desc:'Lágrimas explosivas', effect:p=>{p.explosive=true;}}
-];
-
-function generateDungeon(){
-  dungeon=[]; for(let y=0;y<MAP_H;y++){ dungeon[y]= []; for(let x=0;x<MAP_W;x++) dungeon[y][x]=null; }
-  const start={x:1,y:1}; const positions=[];
-  for(let y=0;y<MAP_H;y++) for(let x=0;x<MAP_W;x++) if(!(x===1&&y===1)) positions.push({x,y});
-  positions.sort(()=>Math.random()-0.5); const chosen=positions.slice(0,4); chosen.push(start);
-  bossRoom={x:2,y:0}; if(!chosen.find(r=>r.x===bossRoom.x&&r.y===bossRoom.y)) chosen.push(bossRoom);
-
-  chosen.forEach(r=>{
-    const isBoss=r.x===bossRoom.x&&r.y===bossRoom.y; const isStart=r.x===start.x&&r.y===start.y;
-    dungeon[r.y][r.x]={ x:r.x,y:r.y, cleared:isStart, isBoss, isStart, visited:isStart, hasItem:!isStart&&!isBoss&&Math.random()<0.4, enemies:[], doors:{N:null,S:null,W:null,E:null} };
-  });
-  chosen.forEach(r=>{
-    const rm=dungeon[r.y][r.x];
-    [{dx:0,dy:-1,dir:'N'},{dx:0,dy:1,dir:'S'},{dx:-1,dy:0,dir:'W'},{dx:1,dy:0,dir:'E'}].forEach(({dx,dy,dir})=>{
-      const nx=r.x+dx,ny=r.y+dy; if(nx>=0&&nx<MAP_W&&ny>=0&&ny<MAP_H&&dungeon[ny]&&dungeon[ny][nx]) rm.doors[dir]={open:isStart,toX:nx,toY:ny};
-    });
-  });
-}
-
-function spawnRoomEnemies(room){
-  enemies=[]; if(room.cleared||room.isStart) return;
-  if(room.isBoss){
-    enemies.push({ x:W/2, y:H/3, w:40, h:36, speed:0.7, hp:25, maxHp:25, type:'boss', shotCooldown:0, shotDelay:65, phaseTimer:0, dx:1, dy:0 });
-  } else {
-    for(let i=0; i<3; i++){
-      enemies.push({ x:(4+i*6)*TILE, y:H/2, w:14, h:14, speed:0.8, hp:3, maxHp:3, type:Math.random()<0.5?'fly':'blob', shotCooldown:Math.random()*60, shotDelay:80, dx:1, dy:1, wanderTimer:0 });
-    }
+// Evento Tecla Escape (PC)
+window.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' || e.keyCode === 27) {
+    cerrarJuego();
   }
-}
+});
 
-function spawnRoomObjects(){
-  roomObjects=[]; const room=dungeon[currentRoom.y][currentRoom.x]; if(room.isBoss||room.isStart) return;
-  roomObjects.push({type:'rock', x:5, y:5}, {type:'pit', x:10, y:10});
-}
-function spawnRoomItems(){
-  items=[]; const room=dungeon[currentRoom.y][currentRoom.x];
-  if(room.hasItem&&!room.cleared){ items.push({x:W/2, y:H/2, data:ITEMS_LIST[Math.floor(Math.random()*ITEMS_LIST.length)], anim:0}); }
-}
+// Evitar que la pantalla se mueva por gestos táctiles accidentales dentro del juego
+gameWrapper.addEventListener('touchmove', (e) => {
+  e.preventDefault();
+}, { passive: false });
 
-function enterRoom(rx,ry,fromDir){
-  currentRoom={x:rx,y:ry}; const room=dungeon[ry][rx]; room.visited=true; projectiles=[]; particles=[];
-  if(fromDir==='N') { player.x=W/2; player.y=(ROWS-3)*TILE; }
-  else if(fromDir==='S') { player.x=W/2; player.y=3*TILE; }
-  else if(fromDir==='W') { player.x=(COLS-3)*TILE; player.y=H/2; }
-  else if(fromDir==='E') { player.x=3*TILE; player.y=H/2; }
-  
-  spawnRoomEnemies(room); spawnRoomObjects(); spawnRoomItems(); updateMinimap(); updateHUD();
-  const bBar=document.getElementById('game-boss-bar'); if(room.isBoss){ bBar.classList.add('show'); } else bBar.classList.remove('show');
-}
-
-function updateMinimap(){
-  const mm=document.getElementById('game-minimap'); mm.innerHTML=''; mm.style.gridTemplateColumns=`repeat(${MAP_W},12px)`;
-  for(let y=0;y<MAP_H;y++){
-    for(let x=0;x<MAP_W;x++){
-      const cell=document.createElement('div'); cell.className='mm-cell'; const r=dungeon[y]&&dungeon[y][x];
-      if(r){ if(x===currentRoom.x&&y===currentRoom.y) cell.classList.add('current'); else if(r.isBoss&&r.visited) cell.classList.add('boss'); else if(r.visited) cell.classList.add('visited'); }
-      mm.appendChild(cell);
-    }
-  }
-}
-
-function updateHUD(){
-  document.getElementById('hud-floor').textContent=`PISO ${floor}`;
-  document.getElementById('hud-score').textContent=`${score} pts`;
-  document.getElementById('hud-coins').textContent=`✦ ${coins}`;
-  const hearts=document.getElementById('hud-hearts'); hearts.innerHTML='';
-  for(let i=0;i<player.maxHp;i+=2){ const h=document.createElement('span'); h.className='heart-icon'+(i+1>player.hp?' empty':''); h.textContent='❤ '; hearts.appendChild(h); }
-}
-
-function spawnBlood(x,y,count=5){ for(let i=0;i<count;i++){ const ang=Math.random()*Math.PI*2; const spd=0.5+Math.random()*1.5; particles.push({ x,y,vx:Math.cos(ang)*spd,vy:Math.sin(ang)*spd, life:20, maxLife:20, size:2, col:C.blood }); } }
-function spawnExplosion(x,y){ for(let i=0;i<8;i++){ const ang=Math.random()*Math.PI*2; particles.push({ x,y,vx:Math.cos(ang)*2,vy:Math.sin(ang)*2, life:15, maxLife:15, size:3, col:C.explosion }); } }
-
-function rectCollide(ax,ay,aw,ah,bx,by,bw,bh){ return ax<bx+bw&&ax+aw>bx&&ay<by+bh&&ay+ah>by; }
-function wallBounds(x,y,w,h){ const m=TILE+2; return x<m||x+w>W-m||y<m*0.5||y+h>H-m; }
-function rockCollide(x,y,w,h){ return roomObjects.some(o=>{ return o.type==='rock' && rectCollide(x,y,w,h, o.x*TILE, o.y*TILE, TILE, TILE); }); }
-
-function damagePlayer(amt=1){
-  if(player.iframes>0) return; player.hp-=amt; player.iframes=60; spawnBlood(player.x,player.y,6); updateHUD();
-  const dmgOverlay=document.getElementById('game-damage'); dmgOverlay.style.opacity='1'; setTimeout(()=>dmgOverlay.style.opacity='0',100);
-  if(player.hp<=0) endGame(false);
-}
-
-function clearRoom(){
-  const room=dungeon[currentRoom.y][currentRoom.x]; if(room.cleared) return; room.cleared=true; roomsCleared++; score+=50; coins+=2;
-  Object.values(room.doors).forEach(d=>{ if(d) d.open=true; }); updateHUD();
-  items.push({type:'coin', x:W/2, y:H/2, anim:0});
-  if(room.isBoss){ score+=200; endGame(true); }
-}
-
-function startGame(){
-  state='playing'; score=0; coins=0; floor=1; player.hp=6; player.maxHp=6; player.iframes=0; player.explosive=false;
-  document.getElementById('screen-title').classList.add('hidden'); document.getElementById('screen-gameover').classList.add('hidden'); document.getElementById('screen-win').classList.add('hidden');
-  document.getElementById('game-hud').classList.remove('hidden'); document.getElementById('game-minimap').classList.remove('hidden');
-  generateDungeon(); enterRoom(1,1,null);
-}
-
-function endGame(won){
-  state = won?'win':'gameover';
-  document.getElementById('game-hud').classList.add('hidden'); document.getElementById('game-minimap').classList.add('hidden'); document.getElementById('game-boss-bar').classList.remove('show');
-  if(won){ document.getElementById('win-score').textContent=`Puntos: ${score}`; document.getElementById('screen-win').classList.remove('hidden'); }
-  else { document.getElementById('go-score').textContent=`Puntos: ${score}`; document.getElementById('screen-gameover').classList.remove('hidden'); }
-}
-
-// BUCLE PRINCIPAL UPDATE Y RENDER
-function update(){
-  if(state!=='playing') return;
-  const room=dungeon[currentRoom.y][currentRoom.x];
-
-  // Movimiento teclado + soporte Joystick móvil híbrido
-  let mx=0, my=0;
-  if(keys['KeyW']||keys['ArrowUp']) my=-1; if(keys['KeyS']||keys['ArrowDown']) my=1;
-  if(keys['KeyA']||keys['ArrowLeft']) mx=-1; if(keys['KeyD']||keys['ArrowRight']) mx=1;
-
-  if(joystickActive) { mx = touchMoveVector.x; my = touchMoveVector.y; }
-  else if(mx!==0 && my!==0) { mx*=0.707; my*=0.707; }
-
-  const nx=player.x+mx*player.speed*1.5; const ny=player.y+my*player.speed*1.5;
-  if(!wallBounds(nx-player.w/2, player.y-player.h/2, player.w, player.h) && !rockCollide(nx-player.w/2, player.y-player.h/2, player.w, player.h)) player.x=nx;
-  if(!wallBounds(player.x-player.w/2, ny-player.h/2, player.w, player.h) && !rockCollide(player.x-player.w/2, ny-player.h/2, player.w, player.h)) player.y=ny;
-
-  // Cambios de sala automáticos por puertas
-  if(room.cleared || enemies.length===0){
-    const hC=Math.floor(COLS/2)*TILE, hR=Math.floor(ROWS/2)*TILE;
-    if(player.y < TILE*1.5 && Math.abs(player.x-hC)<32 && room.doors.N) enterRoom(currentRoom.x, currentRoom.y-1, 'S');
-    if(player.y > H-TILE*1.5 && Math.abs(player.x-hC)<32 && room.doors.S) enterRoom(currentRoom.x, currentRoom.y+1, 'N');
-    if(player.x < TILE*1.5 && Math.abs(player.y-hR)<32 && room.doors.W) enterRoom(currentRoom.x-1, currentRoom.y, 'E');
-    if(player.x > W-TILE*1.5 && Math.abs(player.y-hR)<32 && room.doors.E) enterRoom(currentRoom.x+1, currentRoom.y, 'W');
-  }
-
-  // Disparo teclado + botones móviles híbridos
-  let sx=0, sy=0;
-  if(keys['KeyI']||touchShoot.up) sy=-1; if(keys['KeyK']||touchShoot.down) sy=1;
-  if(keys['KeyJ']||touchShoot.left) sx=-1; if(keys['KeyL']||touchShoot.right) sx=1;
-
-  player.shotCooldown--;
-  if((sx!==0||sy!==0) && player.shotCooldown<=0){
-    if(sx!==0&&sy!==0) sy=0; player.facing={x:sx, y:sy};
-    projectiles.push({ x:player.x, y:player.y, vx:sx*player.shotSpeed, vy:sy*player.shotSpeed, r:4, dmg:player.shotDmg, isEnemy:false, life:70 });
-    player.shotCooldown=player.shotDelay;
-  }
-
-  if(player.iframes>0) player.iframes--;
-
-  // Procesar Enemigos
-  enemies.forEach((e, ei)=>{
-    e.animT = (e.animT||0)+0.1;
-    if(e.type==='boss'){
-      e.phaseTimer++; if(e.phaseTimer>90){ e.phaseTimer=0; const ang=Math.atan2(player.y-e.y, player.x-e.x); e.dx=Math.cos(ang); e.dy=Math.sin(ang); }
-      e.x+=e.dx*e.speed; e.y+=e.dy*e.speed;
-      e.shotCooldown--; if(e.shotCooldown<=0){ e.shotCooldown=e.shotDelay; for(let i=0;i<4;i++){ const ang=(i/4)*Math.PI*2; projectiles.push({x:e.x,y:e.y,vx:Math.cos(ang)*2.5,vy:Math.sin(ang)*2.5,r:5,isEnemy:true,life:100}); } }
-      document.getElementById('boss-fill').style.width=(e.hp/e.maxHp*100)+'%';
-    } else {
-      e.wanderTimer++; if(e.wanderTimer>50){ e.wanderTimer=0; e.dx=(Math.random()-0.5)*2; e.dy=(Math.random()-0.5)*2; }
-      const enx=e.x+e.dx*e.speed, eny=e.y+e.dy*e.speed;
-      if(!wallBounds(enx-e.w/2,e.y-e.h/2,e.w,e.h)&&!rockCollide(enx-e.w/2,e.y-e.h/2,e.w,e.h)) e.x=enx; else e.dx*=-1;
-      if(!wallBounds(e.x-e.w/2,eny-e.h/2,e.w,e.h)&&!rockCollide(e.x-e.w/2,eny-e.h/2,e.w,e.h)) e.y=eny; else e.dy*=-1;
-    }
-    if(rectCollide(player.x-player.w/2, player.y-player.h/2, player.w, player.h, e.x-e.w/2, e.y-e.h/2, e.w, e.h)) damagePlayer(1);
-  });
-
-  // Procesar Proyectiles
-  for(let i=projectiles.length-1; i>=0; i--){
-    const p=projectiles[i]; p.x+=p.vx; p.y+=p.vy; p.life--; let rem=false;
-    if(wallBounds(p.x-p.r, p.y-p.r, p.r*2, p.r*2) || p.life<=0 || rockCollide(p.x-p.r, p.y-p.r, p.r*2, p.r*2)) rem=true;
-
-    if(!rem && !p.isEnemy){
-      enemies.forEach((e, ei)=>{
-        if(rectCollide(p.x-p.r, p.y-p.r, p.r*2, p.r*2, e.x-e.w/2, e.y-e.h/2, e.w, e.h)){
-          e.hp-=p.dmg; spawnBlood(p.x,p.y,3); rem=true;
-          if(e.hp<=0){ spawnBlood(e.x,e.y,8); enemies.splice(ei,1); score+=20; if(enemies.length===0) clearRoom(); }
-        }
-      });
-    }
-    if(!rem && p.isEnemy && rectCollide(p.x-p.r, p.y-p.r, p.r*2, p.r*2, player.x-player.w/2, player.y-player.h/2, player.w, player.h)){ damagePlayer(1); rem=true; }
-    if(rem) projectiles.splice(i,1);
-  }
-
-  // Partículas e Ítems
-  for(let i=particles.length-1; i>=0; i--){ particles[i].life--; if(particles[i].life<=0) particles.splice(i,1); }
-  for(let i=items.length-1; i>=0; i--){
-    const it=items[i]; if(Math.hypot(player.x-it.x, player.y-it.y)<20){
-      if(it.type==='coin') { coins++; score+=5; }
-      else if(it.data) { it.data.effect(player); document.getElementById('popup-name').textContent=it.data.name; document.getElementById('popup-desc').textContent=it.data.desc; const pop=document.getElementById('game-item-popup'); pop.classList.add('show'); setTimeout(()=>pop.classList.remove('show'),2000); }
-      items.splice(i,1); updateHUD();
-    }
-  }
-}
-
-function render(){
-  gCtx.clearRect(0,0,W,H); const room=dungeon[currentRoom.y][currentRoom.x]; drawRoom(room);
-  items.forEach(it=>{ if(it.type==='coin') drawCoin(it.x,it.y,0); else drawItem(it); });
-  enemies.forEach(e=>{ if(e.type=='boss') drawBoss(e); else drawEnemy(e); });
-  particles.forEach(p=>drawParticle(p));
-  if(player.iframes<=0 || Math.floor(player.iframes/5)%2===0) drawPlayer(player.x, player.y, player.facing);
-  projectiles.forEach(p=>drawTear(p));
-}
-
-function gameLoop(){ requestAnimationFrame(gameLoop); update(); render(); }
-gameLoop();
 
 // ══════════════════════════════════════════
-//  EFECTOS Y RENDERIZADORES THREE.JS (HEREDADOS)
+// BLOOD DRIPS GENERATOR
 // ══════════════════════════════════════════
 const dripContainer = document.getElementById('blood-drip');
 for (let i = 0; i < 12; i++) {
-  const d = document.createElement('div'); d.className = 'drip';
-  d.style.left = Math.random() * 100 + '%'; d.style.width = (1.5 + Math.random() * 3) + 'px';
-  d.style.animationDuration = (2 + Math.random() * 4) + 's'; d.style.animationDelay = (Math.random() * 6) + 's';
+  const d = document.createElement('div');
+  d.className = 'drip';
+  d.style.left = Math.random() * 100 + '%';
+  d.style.width = (1.5 + Math.random() * 3) + 'px';
+  d.style.animationDuration = (2 + Math.random() * 4) + 's';
+  d.style.animationDelay = (Math.random() * 6) + 's';
   dripContainer.appendChild(d);
 }
 
-function makeRenderer(canvas, alpha=true) { const r = new THREE.WebGLRenderer({canvas, antialias:true, alpha}); r.setPixelRatio(Math.min(window.devicePixelRatio,2)); return r; }
-function makeCamera(fov=60) { return new THREE.PerspectiveCamera(fov,1,0.1,100); }
-function fitRenderer(renderer, canvas, camera) { const w = canvas.clientWidth, h = canvas.clientHeight; if (w===0||h===0) return; renderer.setSize(w,h,false); camera.aspect = w/h; camera.updateProjectionMatrix(); }
+// ══════════════════════════════════════════
+// SHARED HELPERS
+// ══════════════════════════════════════════
+const BURNT   = new THREE.Color('#8B4513');
+const REDWOOD = new THREE.Color('#A0522D');
+const MACAD   = new THREE.Color('#C8A882');
+const BLUE    = new THREE.Color('#6B8FA3');
+const BLOOD   = new THREE.Color('#6B0000');
 
-// SCENE 1 — HERO
+function makeRenderer(canvas, alpha=true) {
+  const r = new THREE.WebGLRenderer({canvas, antialias:true, alpha});
+  r.setPixelRatio(Math.min(window.devicePixelRatio,2));
+  return r;
+}
+function makeCamera(fov=60) {
+  return new THREE.PerspectiveCamera(fov,1,0.1,100);
+}
+function fitRenderer(renderer, canvas, camera) {
+  const w = canvas.clientWidth, h = canvas.clientHeight;
+  if (w===0||h===0) return;
+  renderer.setSize(w,h,false);
+  camera.aspect = w/h;
+  camera.updateProjectionMatrix();
+}
+
+// ══════════════════════════════════════════
+// SCENE 1 — HERO: Biohazard-inspired structure
+// ══════════════════════════════════════════
 (function(){
-  const canvas = document.getElementById('hero-canvas'); const renderer = makeRenderer(canvas); const scene = new THREE.Scene(); const camera = makeCamera(55); camera.position.set(0,0,5);
-  fitRenderer(renderer, canvas, camera); window.addEventListener('resize', ()=>fitRenderer(renderer,canvas,camera));
+  const canvas = document.getElementById('hero-canvas');
+  const renderer = makeRenderer(canvas);
+  const scene = new THREE.Scene();
+  const camera = makeCamera(55);
+  camera.position.set(0,0,5);
+
+  fitRenderer(renderer, canvas, camera);
+  window.addEventListener('resize', ()=>fitRenderer(renderer,canvas,camera));
+
+  // Lights
   scene.add(new THREE.AmbientLight(0x1a0a05, 2));
-  const core = new THREE.Mesh(new THREE.IcosahedronGeometry(1.2,1), new THREE.MeshPhongMaterial({color:0x1a0805, shininess:80, specular:0x8B4513})); scene.add(core);
-  let t=0; function loop(){ requestAnimationFrame(loop); t+=0.01; core.rotation.y+=0.005; renderer.render(scene,camera); } loop();
+  const pl1 = new THREE.PointLight(0x6B0000,6,15);
+  pl1.position.set(3,3,3); scene.add(pl1);
+  const pl2 = new THREE.PointLight(0x8B4513,4,12);
+  pl2.position.set(-3,-2,2); scene.add(pl2);
+  const pl3 = new THREE.PointLight(0x6B8FA3,2,10);
+  pl3.position.set(0,0,-4); scene.add(pl3);
+
+  // Core: icosahedron
+  const coreMat = new THREE.MeshPhongMaterial({
+    color:0x1a0805, shininess:80, specular:0x8B4513, emissive:0x1a0000, emissiveIntensity:0.3
+  });
+  const core = new THREE.Mesh(new THREE.IcosahedronGeometry(1.2,1), coreMat);
+  scene.add(core);
+
+  // Wire overlay
+  const wireMat = new THREE.MeshBasicMaterial({color:0x6B0000, wireframe:true, transparent:true, opacity:0.3});
+  const coreWire = new THREE.Mesh(new THREE.IcosahedronGeometry(1.25,1), wireMat);
+  scene.add(coreWire);
+
+  // Outer sphere glow (transparent)
+  const glowMat = new THREE.MeshBasicMaterial({color:0x8B4513, transparent:true, opacity:0.04, side:THREE.BackSide});
+  const glow = new THREE.Mesh(new THREE.SphereGeometry(2.5,32,32), glowMat);
+  scene.add(glow);
+
+  // Biohazard rings
+  function addRing(r,tube,color,rx,ry,rz) {
+    const m = new THREE.Mesh(
+      new THREE.TorusGeometry(r,tube,12,80),
+      new THREE.MeshPhongMaterial({color, shininess:60, emissive:color, emissiveIntensity:0.2, transparent:true, opacity:0.6})
+    );
+    m.rotation.set(rx,ry,rz); scene.add(m); return m;
+  }
+  const ring1 = addRing(1.9,0.018,0x6B0000, Math.PI/2,0,0);
+  const ring2 = addRing(1.9,0.018,0x8B4513, Math.PI/2,Math.PI/3*2,0);
+  const ring3 = addRing(1.9,0.018,0xA0522D, Math.PI/2,Math.PI/3*4,0);
+
+  // Outer orbit ring
+  const outerRing = addRing(2.5,0.008,0x6B8FA3, 0.4,0.3,0);
+
+  // Particles
+  const pGeo = new THREE.BufferGeometry();
+  const pN = 200, pArr = new Float32Array(pN*3);
+  for(let i=0;i<pN*3;i++) pArr[i]=(Math.random()-0.5)*10;
+  pGeo.setAttribute('position',new THREE.BufferAttribute(pArr,3));
+  const particles = new THREE.Points(pGeo,new THREE.PointsMaterial({color:0x8B4513,size:0.03,transparent:true,opacity:0.5}));
+  scene.add(particles);
+
+  // Floating debris tetrahedra
+  const debris = [];
+  for(let i=0;i<8;i++){
+    const s = 0.05+Math.random()*0.1;
+    const dm = new THREE.Mesh(
+      new THREE.TetrahedronGeometry(s),
+      new THREE.MeshPhongMaterial({color:0x6B0000,emissive:0x3a0000,emissiveIntensity:0.5})
+    );
+    const ang = (i/8)*Math.PI*2;
+    const rad = 2.2+Math.random()*0.5;
+    dm.position.set(Math.cos(ang)*rad, (Math.random()-0.5)*1.5, Math.sin(ang)*rad);
+    dm.userData.ang = ang; dm.userData.rad = rad; dm.userData.yOff = dm.position.y;
+    scene.add(dm); debris.push(dm);
+  }
+
+  // Drag
+  let drag=false,pmx=0,pmy=0,vx=0,vy=0,rx=0,ry=0;
+  canvas.addEventListener('mousedown',e=>{drag=true;pmx=e.clientX;pmy=e.clientY;});
+  window.addEventListener('mouseup',()=>drag=false);
+  window.addEventListener('mousemove',e=>{
+    if(!drag)return;
+    vy=(e.clientX-pmx)*0.009;vx=(e.clientY-pmy)*0.009;pmx=e.clientX;pmy=e.clientY;
+  });
+  canvas.addEventListener('touchstart',e=>{drag=true;pmx=e.touches[0].clientX;pmy=e.touches[0].clientY;},{passive:true});
+  window.addEventListener('touchend',()=>drag=false);
+  window.addEventListener('touchmove',e=>{
+    if(!drag)return;
+    vy=(e.touches[0].clientX-pmx)*0.009;vx=(e.touches[0].clientY-pmy)*0.009;pmx=e.touches[0].clientX;pmy=e.touches[0].clientY;
+  },{passive:true});
+
+  let t=0;
+  function loop(){
+    requestAnimationFrame(loop); t+=0.01;
+    if(!drag){vx*=0.93;vy*=0.93;ry+=0.005;rx+=0.001;}
+    rx+=vx;ry+=vy;
+
+    core.rotation.x=rx; core.rotation.y=ry;
+    coreWire.rotation.x=rx+0.3; coreWire.rotation.y=ry+0.2;
+
+    ring1.rotation.z=t*0.4;
+    ring2.rotation.z=t*0.4;
+    ring3.rotation.z=t*0.4;
+    outerRing.rotation.z=-t*0.15; outerRing.rotation.x=0.4+Math.sin(t*0.3)*0.1;
+
+    pl1.position.x=Math.sin(t*0.6)*3; pl1.position.y=Math.cos(t*0.4)*3;
+    pl2.position.x=Math.cos(t*0.5)*3; pl2.position.y=Math.sin(t*0.7)*2;
+
+    debris.forEach((d,i)=>{
+      d.userData.ang+=0.004+i*0.0003;
+      d.position.x=Math.cos(d.userData.ang)*d.userData.rad;
+      d.position.z=Math.sin(d.userData.ang)*d.userData.rad;
+      d.position.y=d.userData.yOff+Math.sin(t*0.8+i)*0.2;
+      d.rotation.x+=0.02; d.rotation.y+=0.015;
+    });
+
+    particles.rotation.y=t*0.02;
+    renderer.render(scene,camera);
+  }
+  loop();
 })();
 
-// SCENE 2 — HISTORIA
+// ══════════════════════════════════════════
+// SCENE 2 — HISTORIA: DNA helix / virus structure
+// ══════════════════════════════════════════
 (function(){
-  const canvas = document.getElementById('historia-canvas'); const renderer = makeRenderer(canvas); const scene = new THREE.Scene(); const camera = makeCamera(60); camera.position.set(0,0,5);
-  const ro = new ResizeObserver(()=>fitRenderer(renderer,canvas,camera)); ro.observe(canvas); fitRenderer(renderer,canvas,camera);
+  const canvas = document.getElementById('historia-canvas');
+  const renderer = makeRenderer(canvas);
+  const scene = new THREE.Scene();
+  const camera = makeCamera(60);
+  camera.position.set(0,0,5);
+
+  const ro = new ResizeObserver(()=>fitRenderer(renderer,canvas,camera));
+  ro.observe(canvas);
+  fitRenderer(renderer,canvas,camera);
+
   scene.add(new THREE.AmbientLight(0x0a0503,3));
-  const dodec = new THREE.Mesh(new THREE.DodecahedronGeometry(1.1,0), new THREE.MeshPhongMaterial({color:0x1a0805, shininess:120})); scene.add(dodec);
-  function loop(){ requestAnimationFrame(loop); dodec.rotation.y+=0.005; renderer.render(scene,camera); } loop();
+  const pl1 = new THREE.PointLight(0x8B4513,5,15); pl1.position.set(3,3,2); scene.add(pl1);
+  const pl2 = new THREE.PointLight(0x6B0000,4,12); pl2.position.set(-3,-2,2); scene.add(pl2);
+  const pl3 = new THREE.PointLight(0x6B8FA3,2,10); pl3.position.set(0,3,-3); scene.add(pl3);
+
+  // Central dodecahedron
+  const mat = new THREE.MeshPhongMaterial({
+    color:0x1a0805, shininess:120, specular:0xA0522D, emissive:0x0d0300, emissiveIntensity:0.4
+  });
+  const dodec = new THREE.Mesh(new THREE.DodecahedronGeometry(1.1,0), mat);
+  scene.add(dodec);
+  const dodecWire = new THREE.Mesh(
+    new THREE.DodecahedronGeometry(1.15,0),
+    new THREE.MeshBasicMaterial({color:0xA0522D,wireframe:true,transparent:true,opacity:0.2})
+  );
+  scene.add(dodecWire);
+
+  // DNA-like double helix
+  const helixGroup = new THREE.Group();
+  scene.add(helixGroup);
+  const sphMat1 = new THREE.MeshPhongMaterial({color:0x6B0000,emissive:0x2a0000,emissiveIntensity:0.6,shininess:80});
+  const sphMat2 = new THREE.MeshPhongMaterial({color:0xC8A882,emissive:0x3a2010,emissiveIntensity:0.3,shininess:60});
+  const steps=24;
+  for(let i=0;i<steps;i++){
+    const t2=i/steps;
+    const ang=t2*Math.PI*4;
+    const y=(t2-0.5)*4;
+    const s1=new THREE.Mesh(new THREE.SphereGeometry(0.08,8,8),sphMat1);
+    s1.position.set(Math.cos(ang)*1.8,y,Math.sin(ang)*1.8);
+    helixGroup.add(s1);
+    const s2=new THREE.Mesh(new THREE.SphereGeometry(0.08,8,8),sphMat2);
+    s2.position.set(Math.cos(ang+Math.PI)*1.8,y,Math.sin(ang+Math.PI)*1.8);
+    helixGroup.add(s2);
+    if(i%3===0){
+      const barGeo=new THREE.CylinderGeometry(0.02,0.02,3.6,6);
+      const bar=new THREE.Mesh(barGeo,new THREE.MeshBasicMaterial({color:0x5a3a20,transparent:true,opacity:0.3}));
+      bar.position.set(0,y,0);
+      bar.rotation.z=Math.PI/2;
+      bar.rotation.y=ang;
+      helixGroup.add(bar);
+    }
+  }
+
+  let drag=false,pmx=0,pmy=0,vx=0,vy=0;
+  canvas.addEventListener('mousedown',e=>{drag=true;pmx=e.clientX;pmy=e.clientY;});
+  window.addEventListener('mouseup',()=>drag=false);
+  window.addEventListener('mousemove',e=>{
+    if(!drag)return;
+    vy=(e.clientX-pmx)*0.01;vx=(e.clientY-pmy)*0.01;pmx=e.clientX;pmy=e.clientY;
+  });
+
+  let t=0;
+  function loop(){
+    requestAnimationFrame(loop); t+=0.008;
+    if(!drag){vx*=0.92;vy*=0.92;}
+    dodec.rotation.x+=vx; dodec.rotation.y+=vy+0.004;
+    dodecWire.rotation.x+=vx; dodecWire.rotation.y+=vy+0.006;
+    helixGroup.rotation.y=t*0.5;
+    pl1.position.x=Math.sin(t*0.5)*3; pl1.position.y=Math.cos(t*0.7)*3;
+    renderer.render(scene,camera);
+  }
+  loop();
 })();
 
-// SCENE 3 — LIBRO
+// ══════════════════════════════════════════
+// SCENE 3 — LIBRO: Mysterious tome / book
+// ══════════════════════════════════════════
 (function(){
-  const canvas = document.getElementById('libro-canvas'); const renderer = makeRenderer(canvas); const scene = new THREE.Scene(); const camera = makeCamera(50); camera.position.set(0,0,5);
-  const ro = new ResizeObserver(()=>fitRenderer(renderer,canvas,camera)); ro.observe(canvas); fitRenderer(renderer,canvas,camera);
+  const canvas = document.getElementById('libro-canvas');
+  const renderer = makeRenderer(canvas);
+  const scene = new THREE.Scene();
+  const camera = makeCamera(50);
+  camera.position.set(0,0,5);
+
+  const ro = new ResizeObserver(()=>fitRenderer(renderer,canvas,camera));
+  ro.observe(canvas);
+  fitRenderer(renderer,canvas,camera);
+
   scene.add(new THREE.AmbientLight(0x080503,2));
-  const book = new THREE.Mesh(new THREE.BoxGeometry(1.6,2,0.3), new THREE.MeshPhongMaterial({color:0x1a0805})); scene.add(book);
-  function loop(){ requestAnimationFrame(loop); book.rotation.y+=0.005; renderer.render(scene,camera); } loop();
+  const pl1 = new THREE.PointLight(0x8B4513,4,15); pl1.position.set(3,3,3); scene.add(pl1);
+  const pl2 = new THREE.PointLight(0x6B0000,3,12); pl2.position.set(-2,-2,2); scene.add(pl2);
+
+  // Book shape (box)
+  const bookMat = new THREE.MeshPhongMaterial({
+    color:0x1a0805, shininess:60, specular:0xC8A882, emissive:0x0d0200, emissiveIntensity:0.5
+  });
+  const book = new THREE.Mesh(new THREE.BoxGeometry(1.6,2,0.3), bookMat);
+  scene.add(book);
+
+  // Spine line
+  const spineMat = new THREE.MeshBasicMaterial({color:0x8B4513,transparent:true,opacity:0.6});
+  const spine = new THREE.Mesh(new THREE.BoxGeometry(0.04,2.02,0.32), spineMat);
+  spine.position.set(-0.82,0,0);
+  scene.add(spine);
+
+  // Cover wire
+  const coverWire = new THREE.Mesh(
+    new THREE.BoxGeometry(1.62,2.02,0.32),
+    new THREE.MeshBasicMaterial({color:0x6B0000,wireframe:true,transparent:true,opacity:0.15})
+  );
+  scene.add(coverWire);
+
+  // Floating letters / runes around the book
+  const runeGroup = new THREE.Group(); scene.add(runeGroup);
+  const runeMat = new THREE.MeshBasicMaterial({color:0x8B4513,transparent:true,opacity:0.3});
+  for(let i=0;i<8;i++){
+    const r=new THREE.Mesh(new THREE.TetrahedronGeometry(0.08+Math.random()*0.06),runeMat);
+    const ang=(i/8)*Math.PI*2;
+    r.position.set(Math.cos(ang)*2,( Math.random()-0.5)*2,Math.sin(ang)*2);
+    r.userData.ang=ang; r.userData.r=2;
+    runeGroup.add(r);
+  }
+
+  // Question mark glow plane
+  const qMat=new THREE.MeshBasicMaterial({color:0x6B0000,transparent:true,opacity:0.06,side:THREE.DoubleSide});
+  const qPlane=new THREE.Mesh(new THREE.PlaneGeometry(3,3),qMat);
+  scene.add(qPlane);
+
+  let t=0;
+  function loop(){
+    requestAnimationFrame(loop); t+=0.01;
+    book.rotation.y=Math.sin(t*0.4)*0.4+Math.PI*0.1;
+    book.rotation.x=Math.sin(t*0.3)*0.1;
+    coverWire.rotation.y=book.rotation.y; coverWire.rotation.x=book.rotation.x;
+    spine.rotation.y=book.rotation.y; spine.rotation.x=book.rotation.x;
+    runeGroup.rotation.y=t*0.25;
+    runeGroup.children.forEach((r,i)=>{
+      r.rotation.x+=0.02; r.rotation.z+=0.015;
+      r.position.y=Math.sin(t*0.8+i*0.8)*0.8;
+    });
+    pl1.position.x=Math.sin(t*0.5)*3;
+    pl1.intensity=3+Math.sin(t*2)*0.5;
+    renderer.render(scene,camera);
+  }
+  loop();
 })();
+
+// ══════════════════════════════════════════
+// SCROLL REVEAL
+// ══════════════════════════════════════════
+const revealEls = document.querySelectorAll('.reveal, .timeline-item');
+const revealObs = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting) e.target.classList.add('visible');
+  });
+},{threshold:0.1, rootMargin:'0px 0px -50px 0px'});
+revealEls.forEach(el=>revealObs.observe(el));
 </script>
 </body>
 </html>
