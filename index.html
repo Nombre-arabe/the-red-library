@@ -1,557 +1,239 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-<title>THE RED GALLERY</title>
-<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Oswald:wght@300;400;700&display=swap" rel="stylesheet"/>
-<style>
-:root {
-  --burnt:    #8B4513;
-  --redwood:  #A0522D;
-  --macadamia:#C8A882;
-  --coolblue: #6B8FA3;
-  --lightgray:#C9C9C0;
-  --black:    #0A0705;
-  --darkbg:   #0F0A08;
-  --paper:    #1A1208;
-  --blood:    #6B0000;
-  --rust:     #7A3B1E;
-}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leon Survival - Solo Juego</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #050505;
+            color: #fff;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
 
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{
-  background:var(--darkbg);
-  color:var(--lightgray);
-  font-family:'Courier Prime',monospace;
-  overflow-x:hidden;
-  cursor:crosshair;
-}
+        #game-container {
+            position: relative;
+            border: 4px solid #333;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
+        }
 
-body.playing-game {
-  overflow: hidden !important;
-  touch-action: none;
-}
+        canvas {
+            display: block;
+            background: #111;
+            image-rendering: pixelated;
+        }
 
-/* ── BLOOD DRIP BACKGROUND ── */
-body::before{
-  content:'';position:fixed;inset:0;z-index:0;
-  background:
-    radial-gradient(ellipse 60% 40% at 20% 10%, rgba(107,0,0,0.18) 0%, transparent 70%),
-    radial-gradient(ellipse 40% 60% at 80% 80%, rgba(139,69,19,0.12) 0%, transparent 70%),
-    radial-gradient(ellipse 80% 80% at 50% 50%, rgba(15,10,8,1) 0%, transparent 100%);
-  pointer-events:none;
-}
+        #hud {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+            text-shadow: 2px 2px #000;
+            pointer-events: none;
+        }
 
-body::after{
-  content:'';position:fixed;inset:0;z-index:1;
-  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.06'/%3E%3C/svg%3E");
-  background-size:256px;pointer-events:none;opacity:0.5;
-}
+        .hp-bar {
+            width: 150px;
+            height: 10px;
+            background: #500;
+            border: 1px solid #ff0000;
+            margin-top: 5px;
+        }
 
-.blood-drip{
-  position:fixed;top:0;left:0;right:0;z-index:200;
-  height:80px;pointer-events:none;overflow:hidden;
-}
-.drip{
-  position:absolute;top:0;width:3px;background:linear-gradient(to bottom,var(--blood),transparent);
-  border-radius:0 0 50% 50%;animation:drip linear infinite;opacity:0.7;
-}
-@keyframes drip{
-  0%{height:0;opacity:0.8}
-  80%{height:60px;opacity:0.6}
-  100%{height:80px;opacity:0}
-}
-
-/* ── NAVIGATION ── */
-nav{
-  position:fixed;top:0;left:0;right:0;z-index:300;
-  display:flex;align-items:center;justify-content:space-between;
-  padding:1rem 3rem;
-  border-bottom:1px solid rgba(139,69,19,0.3);
-  backdrop-filter:blur(12px);
-  background:rgba(10,7,5,0.85);
-}
-.nav-logo{
-  font-family:'Special Elite',cursive;
-  font-size:1.4rem;letter-spacing:0.25em;
-  color:var(--macadamia);
-  text-shadow:0 0 20px rgba(139,69,19,0.8);
-  position:relative;
-}
-.nav-logo::after{
-  content:'';position:absolute;bottom:-4px;left:0;right:0;height:1px;
-  background:linear-gradient(to right,transparent,var(--burnt),transparent);
-}
-.nav-links{display:flex;gap:2.5rem;align-items:center;}
-.nav-links a{
-  font-family:'Oswald',sans-serif;font-size:0.75rem;letter-spacing:0.2em;
-  text-transform:uppercase;color:var(--lightgray);text-decoration:none;
-  transition:color 0.3s,text-shadow 0.3s;position:relative;padding-bottom:4px;
-}
-.nav-links a::after{
-  content:'';position:absolute;bottom:0;left:0;width:0;height:1px;
-  background:var(--blood);transition:width 0.3s;
-}
-.nav-links a:hover{color:var(--macadamia);text-shadow:0 0 10px rgba(160,82,45,0.6);}
-.nav-links a:hover::after{width:100%;}
-.nav-emblem{
-  width:40px;height:40px;position:relative;
-  display:flex;align-items:center;justify-content:center;
-}
-.nav-emblem svg{width:100%;height:100%;}
-
-section{position:relative;z-index:2;min-height:100vh;overflow:hidden;}
-
-.section-frame{
-  position:absolute;inset:20px;pointer-events:none;z-index:5;
-  border:1px solid rgba(139,69,19,0.2);
-}
-.section-frame::before,.section-frame::after{
-  content:'';position:absolute;width:30px;height:30px;
-  border-color:var(--burnt);border-style:solid;
-}
-.section-frame::before{top:-1px;left:-1px;border-width:2px 0 0 2px;}
-.section-frame::after{bottom:-1px;right:-1px;border-width:0 2px 2px 0;}
-
-/* ══════════════════════════════════
-   SECCIÓN: JUEGO PRINCIPAL
-══════════════════════════════════ */
-#juego-principal {
-  background: radial-gradient(circle at center, #1f0505 0%, var(--darkbg) 80%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding-top: 100px;
-  text-align: center;
-}
-.game-hero-container { max-width: 800px; padding: 2rem; z-index: 10; }
-.game-tag {
-  font-family: 'Oswald', sans-serif; color: var(--blood); font-size: 0.9rem;
-  letter-spacing: 0.4em; text-transform: uppercase; margin-bottom: 1rem;
-  text-shadow: 0 0 10px rgba(107,0,0,0.6);
-}
-.game-main-btn {
-  background: rgba(10, 7, 5, 0.8); border: 2px solid var(--blood); color: var(--macadamia);
-  font-family: 'Special Elite', cursive; font-size: 1.5rem; padding: 1.2rem 3rem;
-  letter-spacing: 0.15em; cursor: pointer; box-shadow: 0 0 20px rgba(107, 0, 0, 0.4);
-  transition: all 0.4s ease; margin-top: 1.5rem; position: relative; overflow: hidden;
-}
-.game-main-btn:hover {
-  background: var(--blood); color: var(--lightgray); box-shadow: 0 0 35px var(--blood); transform: scale(1.05);
-}
-
-/* INTERFAZ DEL JUEGO EN PANTALLA COMPLETA */
-#fullscreen-game-wrapper {
-  position: fixed; inset: 0; background: #000000; z-index: 9999;
-  display: none; width: 100vw; height: 100vh; user-select: none;
-}
-#game-canvas-container {
-  width: 100%; height: 100%; position: relative; background: #050505;
-}
-#gameCanvas {
-  width: 100%; height: 100%; display: block;
-  image-rendering: pixelated; image-rendering: crisp-edges;
-}
-
-/* INTERFAZ HUD */
-.game-hud-overlay {
-  position: absolute; top: 20px; left: 90px; right: 20px;
-  display: flex; justify-content: space-between; align-items: center;
-  pointer-events: none; font-family: 'Special Elite', cursive; color: var(--macadamia);
-  z-index: 10002; text-shadow: 2px 2px 0px #000;
-}
-.hud-hp-bar {
-  width: 180px; height: 14px; background: #220000; border: 2px solid var(--blood);
-  position: relative; margin-top: 5px; box-shadow: 0 0 8px var(--blood);
-}
-.hud-hp-fill { width: 100%; height: 100%; background: #990000; transition: width 0.2s; }
-
-/* ZONAS TÁCTILES */
-.touch-zone-left {
-  position: absolute; left: 0; top: 0; bottom: 0; width: 45vw;
-  z-index: 10001; cursor: pointer;
-}
-.touch-zone-right {
-  position: absolute; right: 0; top: 0; bottom: 0; width: 45vw;
-  z-index: 10001; cursor: pointer;
-}
-.touch-hint-box {
-  position: absolute; bottom: 15px; font-family: 'Oswald', sans-serif;
-  font-size: 0.65rem; color: rgba(200,168,130,0.3); letter-spacing: 0.1em;
-  pointer-events: none; text-align: center; width: 100%;
-}
-
-.mobile-r-btn {
-  position: absolute; top: 20px; left: 20px; width: 50px; height: 50px;
-  background: rgba(107, 0, 0, 0.85); border: 2px solid var(--macadamia);
-  border-radius: 50%; color: var(--macadamia); font-family: 'Special Elite', cursive;
-  font-size: 1.6rem; display: flex; align-items: center; justify-content: center;
-  cursor: pointer; z-index: 10003; box-shadow: 0 0 15px rgba(0,0,0,0.5);
-}
-
-.pc-hint { margin-top: 1rem; font-size: 0.75rem; color: var(--burnt); letter-spacing: 0.1em; }
-
-/* ── ORIGINAL CONTENT STYLES ── */
-#main{ background:radial-gradient(ellipse at center, #1a0f0a 0%, var(--darkbg) 70%); display:grid; grid-template-rows:auto 1fr; padding-top:80px; }
-.hero-title-block{ text-align:center; padding:3rem 2rem 1rem; position:relative; }
-.hero-eyebrow{
-  font-family:'Oswald',sans-serif; font-size:0.7rem; letter-spacing:0.4em; text-transform:uppercase; color:var(--coolblue);
-  margin-bottom:1rem; display:flex; align-items:center; justify-content:center; gap:1rem;
-}
-.hero-eyebrow::before,.hero-eyebrow::after{ content:''; display:block; width:40px; height:1px; background:var(--coolblue); opacity:0.5; }
-.main-title{
-  font-family:'Special Elite',cursive; font-size:clamp(3rem,8vw,8rem); line-height:0.9; letter-spacing:0.05em; color:var(--macadamia);
-  text-shadow: 0 0 30px rgba(139,69,19,0.6), 0 0 80px rgba(107,0,0,0.3), 3px 3px 0 rgba(107,0,0,0.4); animation:titleFlicker 8s infinite; margin-bottom:0.5rem;
-}
-@keyframes titleFlicker{ 0%,95%,100%{opacity:1;} 96%{opacity:0.85;} 97%{opacity:1;} 98%{opacity:0.9;} 99%{opacity:1;} }
-.title-sub{ font-family:'Oswald',sans-serif; font-size:0.9rem; letter-spacing:0.5em; text-transform:uppercase; color:var(--burnt); margin-bottom:0.5rem; }
-.title-divider{ display:flex; align-items:center; justify-content:center; gap:1rem; margin:1.5rem auto; max-width:500px; }
-.title-divider span{ height:1px; flex:1; background:linear-gradient(to right,transparent,var(--burnt),transparent); }
-.title-divider svg{ width:20px; height:20px; fill:var(--blood); }
-.hero-canvas-wrap{ display:grid; grid-template-columns:1fr 400px 1fr; align-items:center; gap:2rem; padding:0 4rem 3rem; max-width:1400px; margin:0 auto; width:100%; }
-#hero-canvas{ width:400px; height:400px; display:block; filter:drop-shadow(0 0 30px rgba(107,0,0,0.5)); }
-.hero-side-text{ display:flex; flex-direction:column; gap:1.5rem; }
-.hero-stat{ border-left:2px solid var(--blood); padding-left:1rem; }
-.hero-stat-label{ font-family:'Oswald',sans-serif; font-size:0.6rem; letter-spacing:0.25em; text-transform:uppercase; color:var(--burnt); margin-bottom:0.25rem; }
-.hero-stat-val{ font-family:'Special Elite',cursive; font-size:1.4rem; color:var(--macadamia); line-height:1.1; }
-.hero-stat-val small{ font-family:'Courier Prime',monospace; font-size:0.75rem; color:var(--lightgray); display:block; margin-top:0.2rem; }
-.scroll-prompt{ text-align:center; padding-bottom:2rem; font-family:'Oswald',sans-serif; font-size:0.65rem; letter-spacing:0.3em; text-transform:uppercase; color:var(--burnt); opacity:0.6; animation:pulse 2s infinite; }
-@keyframes pulse{0%,100%{opacity:0.4;}50%{opacity:0.9;}}
-
-#historia{ background: linear-gradient(180deg,var(--darkbg) 0%, #120c07 50%, var(--darkbg) 100%); padding:6rem 0; }
-.historia-inner{ max-width:1200px; margin:0 auto; padding:0 3rem; }
-.historia-header{ display:flex; align-items:flex-start; gap:3rem; margin-bottom:4rem; }
-.historia-num{ font-family:'Special Elite',cursive; font-size:8rem; line-height:0.8; color:rgba(139,69,19,0.15); flex-shrink:0; -webkit-text-stroke:1px rgba(139,69,19,0.3); }
-.historia-title-group{ flex:1; }
-.historia-chapter{ font-family:'Oswald',sans-serif; font-size:0.65rem; letter-spacing:0.3em; text-transform:uppercase; color:var(--coolblue); margin-bottom:0.5rem; }
-.historia-h2{ font-family:'Special Elite',cursive; font-size:clamp(2rem,4vw,4rem); color:var(--macadamia); text-shadow:0 0 20px rgba(107,0,0,0.4); line-height:1.1; margin-bottom:1rem; }
-.historia-tagline{ font-size:0.85rem; color:var(--lightgray); line-height:1.8; max-width:500px; border-left:2px solid var(--blood); padding-left:1rem; }
-.timeline{ position:relative; padding-left:2rem; }
-.timeline::before{ content:''; position:absolute; left:0; top:0; bottom:0; width:1px; background:linear-gradient(to bottom, var(--blood), rgba(139,69,19,0.3), var(--blood)); }
-.timeline-item{ position:relative; padding-left:2.5rem; margin-bottom:3.5rem; opacity:0; transform:translateX(-30px); transition:opacity 0.7s ease,transform 0.7s ease; }
-.timeline-item.visible{ opacity:1; transform:translateX(0); }
-.timeline-dot{ position:absolute; left:-2.5rem; top:0.4rem; width:12px; height:12px; border-radius:50%; background:var(--blood); animation:dotPulse 2s infinite; }
-@keyframes dotPulse{ 0%,100%{box-shadow:0 0 6px var(--blood);} 50%{box-shadow:0 0 15px var(--blood),0 0 30px rgba(107,0,0,0.6);} }
-.timeline-year{ font-family:'Oswald',sans-serif; font-size:0.65rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--burnt); margin-bottom:0.4rem; }
-.timeline-title{ font-family:'Special Elite',cursive; font-size:1.3rem; color:var(--macadamia); margin-bottom:0.6rem; }
-.timeline-body{ font-size:0.85rem; line-height:1.9; color:var(--lightgray); max-width:700px; }
-.timeline-body em{ color:var(--macadamia); font-style:italic; }
-.historia-split{ display:grid; grid-template-columns:1fr 1fr; gap:4rem; align-items:center; margin-top:5rem; }
-.historia-canvas-wrap{ position:relative; }
-.historia-canvas-wrap::before{ content:''; position:absolute; inset:-20px; border:1px solid rgba(139,69,19,0.15); pointer-events:none; }
-#historia-canvas{ width:100%; aspect-ratio:1; display:block; max-width:450px; margin:0 auto; }
-.lore-cards{ display:flex; flex-direction:column; gap:1rem; }
-.lore-card{ background:rgba(139,69,19,0.05); border:1px solid rgba(139,69,19,0.15); padding:1.2rem 1.5rem; position:relative; overflow:hidden; transition:background 0.3s,border-color 0.3s; }
-.lore-card::before{ content:''; position:absolute; left:0; top:0; bottom:0; width:2px; background:var(--blood); }
-.lore-card:hover{ background:rgba(139,69,19,0.1); border-color:rgba(139,69,19,0.4); }
-.lore-card-title{ font-family:'Special Elite',cursive; font-size:1rem; color:var(--macadamia); margin-bottom:0.4rem; display:flex; align-items:center; gap:0.7rem; }
-.lore-card-title span{ display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--blood); }
-.lore-card-text{ font-size:0.78rem; line-height:1.7; color:var(--lightgray); }
-
-#libro{ background:var(--darkbg); display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden; }
-.libro-bg-glow{ position:absolute; inset:0; background:radial-gradient(ellipse 60% 40% at 50% 50%, rgba(107,82,45,0.08) 0%, transparent 70%); }
-.libro-inner{ text-align:center; position:relative; z-index:2; padding:4rem 2rem; }
-#libro-canvas{ width:300px; height:300px; display:block; margin:0 auto 3rem; filter:drop-shadow(0 0 40px rgba(139,69,19,0.4)); opacity:0.7; }
-.coming-soon-label{ font-family:'Oswald',sans-serif; font-size:0.65rem; letter-spacing:0.4em; text-transform:uppercase; color:var(--burnt); margin-bottom:1rem; display:flex; align-items:center; justify-content:center; gap:1rem; }
-.coming-soon-label::before,.coming-soon-label::after{ content:'✦'; color:var(--blood); font-size:0.5rem; }
-.coming-soon-title{ font-family:'Special Elite',cursive; font-size:clamp(2.5rem,6vw,6rem); color:var(--macadamia); text-shadow:0 0 40px rgba(139,69,19,0.5); margin-bottom:0.5rem; line-height:1; }
-.coming-soon-sub{ font-family:'Special Elite',cursive; font-size:clamp(1.5rem,3vw,2.5rem); color:var(--burnt); letter-spacing:0.1em; margin-bottom:2rem; }
-.coming-soon-desc{ font-size:0.8rem; color:var(--lightgray); line-height:1.9; max-width:420px; margin:0 auto 3rem; opacity:0.6; }
-
-.reveal{opacity:0;transform:translateY(40px);transition:opacity 0.8s ease,transform 0.8s ease;}
-.reveal.visible{opacity:1;transform:translateY(0);}
-
-footer{ position:relative; z-index:2; padding:2rem 3rem; border-top:1px solid rgba(139,69,19,0.2); display:flex; align-items:center; justify-content:space-between; background:rgba(10,7,5,0.9); }
-footer p{font-family:'Courier Prime',monospace; font-size:0.65rem; color:var(--burnt); letter-spacing:0.1em;}
-.footer-emblem{font-family:'Special Elite',cursive; color:var(--macadamia); font-size:1rem; letter-spacing:0.2em;}
-
-::-webkit-scrollbar{width:4px;}
-::-webkit-scrollbar-track{background:var(--darkbg);}
-::-webkit-scrollbar-thumb{background:var(--blood);}
-
-@media(max-width:900px){
-  .hero-canvas-wrap{grid-template-columns:1fr;justify-items:center;}
-  #hero-canvas{width:300px;height:300px;}
-  .hero-side-text{flex-direction:row;flex-wrap:wrap;justify-content:center;}
-  .historia-split{grid-template-columns:1fr;}
-  .historia-header{flex-direction:column;gap:1rem;}
-  .historia-num{font-size:4rem;}
-  nav{padding:1rem 1.5rem;}
-  .nav-links{gap:1.2rem;}
-  .hero-canvas-wrap{padding:0 1.5rem 3rem;}
-}
-</style>
+        .hp-fill {
+            width: 100%;
+            height: 100%;
+            background: #ff0000;
+        }
+    </style>
 </head>
 <body>
 
-<!-- INTERFAZ COMPLETA DEL JUEGO -->
-<div id="fullscreen-game-wrapper">
-  <button class="mobile-r-btn" id="r-exit-btn">R</button>
-  
-  <div class="game-hud-overlay">
-    <div>
-      <div>LEON S. KENNEDY</div>
-      <div class="hud-hp-bar"><div class="hud-hp-fill" id="hud-hp"></div></div>
+<div id="game-container">
+    <div id="hud">
+        <div>
+            <div>LEON S. KENNEDY</div>
+            <div class="hp-bar"><div class="hp-fill" id="hp"></div></div>
+        </div>
+        <div style="text-align: right;">
+            <div>PISO 1</div>
+            <div>ELIMINADOS: <span id="kills">0</span> / 30</div>
+        </div>
     </div>
-    <div style="text-align: right;">
-      <div style="font-size: 0.75rem; color: var(--coolblue);">ZONA 1 - PISO 1</div>
-      <div style="font-size: 1.4rem;" id="hud-ammo">ELIMINADOS: <span id="kill-count">0</span> / 30</div>
-    </div>
-  </div>
-
-  <div class="touch-zone-left" id="touchMoveZone">
-    <div class="touch-hint-box">Mover: Desliza / Presiona aquí (WASD)</div>
-  </div>
-  <div class="touch-zone-right" id="touchShootZone">
-    <div class="touch-hint-box">Disparar (4 Direcciones): Presiona aquí (Flechas)</div>
-  </div>
-
-  <div id="game-canvas-container">
-    <canvas id="gameCanvas"></canvas>
-  </div>
+    <canvas id="gameCanvas" width="800" height="500"></canvas>
 </div>
 
-<div class="blood-drip" id="blood-drip"></div>
-
-<nav>
-  <div class="nav-logo">THE RED GALLERY</div>
-  <div class="nav-links">
-    <a href="#juego-principal">Juego</a>
-    <a href="#main">Inicio</a>
-    <a href="#historia">Historia</a>
-    <a href="#libro">El Libro</a>
-  </div>
-</nav>
-
-<section id="juego-principal">
-  <div class="section-frame"></div>
-  <div class="game-hero-container reveal">
-    <div class="game-tag">// OPERACIÓN: CRISTAL CARMESÍ</div>
-    <h2 class="main-title" style="font-size: clamp(2rem, 5vw, 4.5rem);">LEON: THE PORTAL SURVIVAL</h2>
-    <p class="title-sub" style="color: var(--lightgray); max-width: 650px; margin: 1rem auto; font-size: 0.85rem; line-height: 1.6;">
-      Enfréntate a las hordas de Umbrella con disparo en 4 direcciones. Estilo pixel art texturizado integrado en tiempo real.
-    </p>
-    <button class="game-main-btn" id="start-game-trigger">INICIAR SIMULACIÓN</button>
-    <div class="pc-hint">Teclado: WASD para moverte | Flechas para disparar</div>
-  </div>
-</section>
-
-<!-- SECCIONES DE CONTENIDO ORIGINAL -->
-<section id="main">
-  <div class="section-frame"></div>
-  <div class="hero-title-block reveal">
-    <div class="hero-eyebrow">Bienvenido al Umbral</div>
-    <h1 class="main-title">THE RED<br>GALLERY</h1>
-    <div class="title-sub">Una colección oscura</div>
-  </div>
-  <div class="hero-canvas-wrap">
-    <div class="hero-side-text reveal" style="text-align:right;align-items:flex-end;">
-      <div class="hero-stat" style="border-right:2px solid var(--blood);padding-right:1rem;">
-        <div class="hero-stat-label">Estado</div>
-        <div class="hero-stat-val">ACTIVO</div>
-      </div>
-    </div>
-    <canvas id="hero-canvas"></canvas>
-    <div class="hero-side-text reveal">
-      <div class="hero-stat">
-        <div class="hero-stat-label">Amenaza</div>
-        <div class="hero-stat-val">CRÍTICA</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section id="historia">
-  <div class="section-frame"></div>
-  <div class="historia-inner">
-    <div class="historia-header reveal">
-      <div class="historia-num">02</div>
-      <div class="historia-title-group">
-        <h2 class="historia-h2">El origen de las sombras</h2>
-      </div>
-    </div>
-    <div class="historia-split">
-      <div class="historia-canvas-wrap reveal"><canvas id="historia-canvas"></canvas></div>
-    </div>
-  </div>
-</section>
-
-<section id="libro">
-  <div class="section-frame"></div>
-  <div class="libro-inner">
-    <canvas id="libro-canvas"></canvas>
-    <div class="coming-soon-title">EL LIBRO</div>
-  </div>
-</section>
-
-<footer>
-  <div class="footer-emblem">THE RED GALLERY</div>
-  <p>© 2026 — Todos los archivos clasificados</p>
-</footer>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
-// ══════════════════════════════════════════
-// MOTOR DEL JUEGO CORREGIDO CON ENEMIGOS
-// ══════════════════════════════════════════
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
-const gameWrapper = document.getElementById('fullscreen-game-wrapper');
 
-ctx.imageSmoothingEnabled = false;
-
-let gameRunning = false;
-let kills = 0;
+// Configuración de Leon
 let player = {
-  x: 400, y: 250, size: 24, speed: 4, hp: 100, maxHp: 100,
-  lastShot: 0, shotCooldown: 220
+    x: 400,
+    y: 250,
+    speed: 4,
+    hp: 100
 };
+
 let bullets = [];
 let enemies = [];
 let keys = {};
+let kills = 0;
+let lastShot = 0;
+const shotCooldown = 200;
 
-const V_WIDTH = 800;
-const V_HEIGHT = 500;
-
-function resizeGame() { canvas.width = V_WIDTH; canvas.height = V_HEIGHT; }
-window.addEventListener('resize', resizeGame);
-resizeGame();
-
+// Registrar teclas pulsadas
 window.addEventListener('keydown', e => { keys[e.key.toLowerCase()] = true; });
 window.addEventListener('keyup', e => { keys[e.key.toLowerCase()] = false; });
 
-function fireBullet(dir) {
-  const now = Date.now();
-  if (now - player.lastShot < player.shotCooldown) return;
-  let vx = 0, vy = 0;
-  if (dir === 'up') vy = -7;
-  if (dir === 'down') vy = 7;
-  if (dir === 'left') vx = -7;
-  if (dir === 'right') vx = 7;
+// Función para disparar
+function shoot(dir) {
+    const now = Date.now();
+    if (now - lastShot < shotCooldown) return;
+    
+    let vx = 0, vy = 0;
+    if (dir === 'up') vy = -7;
+    if (dir === 'down') vy = 7;
+    if (dir === 'left') vx = -7;
+    if (dir === 'right') vx = 7;
 
-  bullets.push({ x: player.x, y: player.y - 6, vx, vy, size: 5 });
-  player.lastShot = now;
+    bullets.push({ x: player.x, y: player.y - 10, vx, vy });
+    lastShot = now;
 }
 
+// Generar zombis en los bordes
 function spawnZombie() {
-  if (enemies.length >= 8) return; 
-  let edge = Math.floor(Math.random() * 4);
-  let x, y;
-  if (edge === 0) { x = Math.random() * V_WIDTH; y = 40; }
-  if (edge === 1) { x = Math.random() * V_WIDTH; y = V_HEIGHT - 30; }
-  if (edge === 2) { x = 30; y = Math.random() * V_HEIGHT; }
-  if (edge === 3) { x = V_WIDTH - 30; y = Math.random() * V_HEIGHT; }
-  enemies.push({ x, y, speed: 1.2, hp: 3, size: 22 });
+    if (enemies.length >= 6) return;
+    let edge = Math.floor(Math.random() * 4);
+    let x, y;
+    if (edge === 0) { x = Math.random() * 800; y = -20; }
+    if (edge === 1) { x = Math.random() * 800; y = 520; }
+    if (edge === 2) { x = -20; y = Math.random() * 500; }
+    if (edge === 3) { x = 820; y = Math.random() * 500; }
+    
+    enemies.push({ x, y, speed: 1.2, hp: 3 });
 }
 
-// TEXTURAS PIXEL ART
-function drawMetalFloor() {
-  const t = 40;
-  for (let x = 0; x < V_WIDTH; x += t) {
-    for (let y = 0; y < V_HEIGHT; y += t) {
-      ctx.fillStyle = '#191d21'; ctx.fillRect(x, y, t, t);
-      ctx.fillStyle = '#0f1113'; ctx.fillRect(x, y, t, 2); ctx.fillRect(x, y, 2, t);
-    }
-  }
-}
+// Bucle principal del juego
+function loop() {
+    // 1. LÓGICA DE MOVIMIENTO (WASD)
+    if (keys['w'] || keys['w']) player.y -= player.speed;
+    if (keys['s'] || keys['s']) player.y += player.speed;
+    if (keys['a'] || keys['a']) player.x -= player.speed;
+    if (keys['d'] || keys['d']) player.x += player.speed;
 
-function updateGame() {
-  if (!gameRunning) return;
+    // Límites de la pantalla para Leon
+    if (player.x < 15) player.x = 15;
+    if (player.x > 785) player.x = 785;
+    if (player.y < 15) player.y = 15;
+    if (player.y > 485) player.y = 485;
 
-  // Mover a Leon
-  let mx = 0, my = 0;
-  if (keys['w']) my = -1; if (keys['s']) my = 1;
-  if (keys['a']) mx = -1; if (keys['d']) mx = 1;
-  player.x += mx * player.speed; player.y += my * player.speed;
+    // 2. LÓGICA DE DISPARO (Flechas del teclado)
+    if (keys['arrowup']) shoot('up');
+    if (keys['arrowdown']) shoot('down');
+    if (keys['arrowleft']) shoot('left');
+    if (keys['arrowright']) shoot('right');
 
-  if (player.x < 35) player.x = 35; if (player.x > V_WIDTH - 35) player.x = V_WIDTH - 35;
-  if (player.y < 50) player.y = 50; if (player.y > V_HEIGHT - 35) player.y = V_HEIGHT - 35;
-
-  // Disparar
-  if (keys['arrowup']) fireBullet('up');
-  if (keys['arrowdown']) fireBullet('down');
-  if (keys['arrowleft']) fireBullet('left');
-  if (keys['arrowright']) fireBullet('right');
-
-  // Actualizar Balas
-  bullets.forEach((b, bi) => {
-    b.x += b.vx; b.y += b.vy;
-    if (b.x < 10 || b.x > V_WIDTH - 10 || b.y < 10 || b.y > V_HEIGHT - 10) bullets.splice(bi, 1);
-  });
-
-  // IA Zombis de Umbrella
-  if (Math.random() < 0.02) spawnZombie();
-
-  enemies.forEach((e, ei) => {
-    let dx = player.x - e.x; let dy = player.y - e.y;
-    let dist = Math.sqrt(dx*dx + dy*dy);
-    if (dist > 0) { e.x += (dx/dist) * e.speed; e.y += (dy/dist) * e.speed; }
-
-    // Colisión Bala - Zombi
-    bullets.forEach((b, bi) => {
-      let bdx = b.x - e.x; let bdy = b.y - e.y;
-      if (Math.sqrt(bdx*bdx + bdy*bdy) < e.size/2) {
-        e.hp--; bullets.splice(bi, 1);
-        if (e.hp <= 0) { enemies.splice(ei, 1); kills++; document.getElementById('kill-count').innerText = kills; }
-      }
+    // Mover Balas
+    bullets.forEach((b, index) => {
+        b.x += b.vx;
+        b.y += b.vy;
+        if (b.x < 0 || b.x > 800 || b.y < 0 || b.y > 500) {
+            bullets.splice(index, 1);
+        }
     });
 
-    // Daño a Leon
-    if (dist < 18) { player.hp -= 0.2; document.getElementById('hud-hp').style.width = player.hp + '%'; }
-  });
+    // Aparecer enemigos aleatoriamente
+    if (Math.random() < 0.02) spawnZombie();
+
+    // Mover Zombis hacia Leon
+    enemies.forEach((enemy, eIndex) => {
+        let dx = player.x - enemy.x;
+        let dy = player.y - enemy.y;
+        let dist = Math.sqrt(dx * dx + dy * dy);
+        
+        if (dist > 0) {
+            enemy.x += (dx / dist) * enemy.speed;
+            enemy.y += (dy / dist) * enemy.speed;
+        }
+
+        // Detectar si la bala le da al zombi
+        bullets.forEach((bullet, bIndex) => {
+            let bDx = bullet.x - enemy.x;
+            let bDy = bullet.y - enemy.y;
+            let bDist = Math.sqrt(bDx * bDx + bDy * bDy);
+            
+            if (bDist < 15) { // Impacto
+                enemy.hp--;
+                bullets.splice(bIndex, 1);
+                if (enemy.hp <= 0) {
+                    enemies.splice(eIndex, 1);
+                    kills++;
+                    document.getElementById('kills').innerText = kills;
+                }
+            }
+        });
+
+        // Daño a Leon si el zombi lo toca
+        if (dist < 15) {
+            player.hp -= 0.15;
+            if (player.hp < 0) player.hp = 0;
+            document.getElementById('hp').style.width = player.hp + '%';
+        }
+    });
+
+    // 3. RENDERIZADO (DIBUJAR TODO)
+    ctx.clearRect(0, 0, 800, 500);
+
+    // Fondo simulado de rejilla metálica
+    ctx.fillStyle = '#1c1c1c';
+    for (let i = 0; i < 800; i += 40) {
+        for (let j = 0; j < 500; j += 40) {
+            ctx.strokeStyle = '#111';
+            ctx.strokeRect(i, j, 40, 40);
+        }
+    }
+
+    // Dibujar Balas
+    ctx.fillStyle = '#ff0';
+    bullets.forEach(b => {
+        ctx.fillRect(b.x - 2, b.y - 2, 4, 4);
+    });
+
+    // Dibujar Zombis (Bloques pixelados verdes)
+    enemies.forEach(e => {
+        ctx.fillStyle = '#2e5c2e'; // Cuerpo verde zombi
+        ctx.fillRect(e.x - 8, e.y - 15, 16, 25);
+        ctx.fillStyle = '#4a2306'; // Pantalón roto marrón
+        ctx.fillRect(e.x - 8, e.y + 5, 16, 5);
+    });
+
+    // Dibujar a Leon S. Kennedy (Pixel Art hecho con rectángulos)
+    ctx.fillStyle = '#dcb888'; // Piel / Cara
+    ctx.fillRect(player.x - 6, player.y - 22, 12, 12);
+    ctx.fillStyle = '#eed292'; // Cabello rubio característico
+    ctx.fillRect(player.x - 7, player.y - 25, 14, 5);
+    ctx.fillStyle = '#1a2b4c'; // Uniforme azul policial de R.P.D.
+    ctx.fillRect(player.x - 8, player.y - 10, 16, 15);
+    ctx.fillStyle = '#111';    // Botas / Cinturón
+    ctx.fillRect(player.x - 6, player.y + 5, 12, 5);
+
+    requestAnimationFrame(loop);
 }
 
-function renderGame() {
-  ctx.clearRect(0, 0, V_WIDTH, V_HEIGHT);
-  drawMetalFloor();
-
-  // Dibujar Balas
-  bullets.forEach(b => {
-    ctx.fillStyle = '#ffff00'; ctx.fillRect(b.x - 2, b.y - 2, b.size, b.size);
-  });
-
-  // Dibujar Zombis (Pixel Art de Umbrella)
-  enemies.forEach(e => {
-    ctx.fillStyle = '#335c33'; ctx.fillRect(e.x - 8, e.y - 12, 16, 24); // Cuerpo
-    ctx.fillStyle = '#7a3b1e'; ctx.fillRect(e.x - 8, e.y + 4, 16, 4);   // Pantalón roto
-  });
-
-  // Dibujar a Leon S. Kennedy
-  ctx.fillStyle = '#eadeb2'; ctx.fillRect(player.x - 6, player.y - 20, 12, 6); // Pelo rubio
-  ctx.fillStyle = '#151922'; ctx.fillRect(player.x - 8, player.y - 14, 16, 14); // Traje azul oscuro
-  ctx.fillStyle = '#202a3a'; ctx.fillRect(player.x - 7, player.y, 14, 8); // Pantalón
-}
-
-function gameLoop() { updateGame(); renderGame(); if (gameRunning) requestAnimationFrame(gameLoop); }
-
-document.getElementById('start-game-trigger').addEventListener('click', () => {
-  gameWrapper.style.display = 'block'; gameRunning = true; resizeGame(); requestAnimationFrame(gameLoop);
-});
-document.getElementById('r-exit-btn').addEventListener('click', () => { gameWrapper.style.display = 'none'; gameRunning = false; });
-
-// ══════════════════════════════════════════
-// ARREGLO DE THREE.JS ORIGINAL (SIN ERRORES)
-// ══════════════════════════════════════════
-const dripContainer = document.getElementById('blood-drip');
-for (let i = 0; i < 8; i++) {
-  const d = document.createElement('div'); d.className = 'drip'; d.style.left = Math.random() * 100 + '%';
-  d.style.animationDuration = (2 + Math.random() * 3) + 's'; dripContainer.appendChild(d);
-}
-
-function makeRenderer(c) { return new THREE.WebGLRenderer({canvas:c, antialias:true, alpha:true}); }
-function fit(r, c, cam) { r.setSize(c.clientWidth, c.clientHeight, false); cam.aspect = c.clientWidth/c.clientHeight; cam.updateProjectionMatrix(); }
-
-(function(){
-  const c = document.getElementById('hero-canvas'); const r = makeRenderer(c);
-  const s = new THREE.Scene(); const cam = new THREE.PerspectiveCamera(50,1,0.1,100); cam.position.z = 4;
-  fit(r,c,cam); s.add(new THREE.AmbientLight(0xffffff, 0.5));
-  // Solución al error: Cambiado a MeshStandardMaterial
-  const m = new THREE.Mesh(new THREE.IcosahedronGeometry(1,0), new THREE.MeshStandardMaterial({color:0x6b0000, wireframe:true}));
-  s.add(m); function lp(){ requestAnimationFrame(lp); m.rotation.y+=0.01; r.render(s,cam); } lp();
-})();
+// Iniciar el juego automáticamente al cargar
+requestAnimationFrame(loop);
 </script>
+
 </body>
 </html>
